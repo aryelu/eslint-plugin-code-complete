@@ -155,6 +155,94 @@ setVisibility({ state: 'visible' });
 
 - `ignoreDefault`: Whether to ignore parameters with boolean default values (default: false)
 
+### no-late-variable-usage
+
+Enforces that variables are used close to where they are declared to improve code readability and maintainability.
+
+```js
+// ❌ Bad - variable used far from declaration
+function process() {
+  const data = fetchData();
+  
+  console.log("Step 1");
+  console.log("Step 2");
+  console.log("Step 3");
+  console.log("Step 4");
+  
+  return processData(data); // 'data' used far from declaration
+}
+
+// ✅ Good - variable used near declaration
+function process() {
+  const data = fetchData();
+  const processedData = processData(data); // 'data' used immediately
+  
+  console.log("Step 1");
+  console.log("Step 2");
+  console.log("Step 3");
+  
+  return processedData;
+}
+```
+
+#### Options
+
+- `maxLinesBetweenDeclarationAndUsage`: Maximum number of lines allowed between variable declaration and its usage (default: 5)
+
+### low-function-cohesion
+
+Detects functions with low cohesion between code blocks. This helps identify functions that might be doing too many unrelated things and should be split into smaller, more focused functions.
+
+```js
+// ❌ Bad - function with low cohesion
+function processEverything(data) {
+  // Process user data
+  const users = data.users;
+  const activeUsers = users.filter(user => user.active);
+  console.log(`Active users: ${activeUsers.length}`);
+  
+  // Process completely unrelated product data
+  const products = data.products;
+  const expensiveProducts = products.filter(product => product.price > 100);
+  console.log(`Expensive products: ${expensiveProducts.length}`);
+  
+  // Process unrelated order data
+  const orders = data.orders;
+  const pendingOrders = orders.filter(order => order.status === 'pending');
+  console.log(`Pending orders: ${pendingOrders.length}`);
+}
+
+// ✅ Good - split into cohesive functions
+function processUserData(users) {
+  const activeUsers = users.filter(user => user.active);
+  console.log(`Active users: ${activeUsers.length}`);
+  return activeUsers;
+}
+
+function processProductData(products) {
+  const expensiveProducts = products.filter(product => product.price > 100);
+  console.log(`Expensive products: ${expensiveProducts.length}`);
+  return expensiveProducts;
+}
+
+function processOrderData(orders) {
+  const pendingOrders = orders.filter(order => order.status === 'pending');
+  console.log(`Pending orders: ${pendingOrders.length}`);
+  return pendingOrders;
+}
+
+function processEverything(data) {
+  processUserData(data.users);
+  processProductData(data.products);
+  processOrderData(data.orders);
+}
+```
+
+#### Options
+
+- `minSharedVariablePercentage`: Minimum percentage of shared variables required between code blocks (default: 30)
+- `minFunctionLength`: Minimum function length in lines to analyze (default: 10)
+
 ## Development
 
 To set up the local development environment:
@@ -170,6 +258,20 @@ npm install
 # Run tests
 npm test
 ```
+
+## GitHub Repository
+
+This project is available on GitHub. To contribute:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/amazing-rule`)
+3. Make your changes
+4. Run tests to ensure they pass (`npm test`)
+5. Commit your changes (`git commit -am 'Add amazing rule'`)
+6. Push to the branch (`git push origin feature/amazing-rule`)
+7. Create a new Pull Request
+
+For more details on contributing, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## License
 

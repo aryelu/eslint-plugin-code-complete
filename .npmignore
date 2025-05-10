@@ -1,0 +1,13 @@
+.git/
+.github/
+.gitignore
+.DS_Store
+.eslintrc.json
+.eslintignore
+tests/
+vitest.config.ts
+tsconfig.json
+node_modules/
+.npmignore
+CONTRIBUTING.md
+*.log 

@@ -19,7 +19,7 @@ const rule: Rule.RuleModule = {
       recommended: true,
       url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/no-late-variable-usage.md'
     },
-    fixable: null,
+    fixable: undefined,
     schema: [
       {
         type: 'object',

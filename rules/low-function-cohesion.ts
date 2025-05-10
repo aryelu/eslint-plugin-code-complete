@@ -31,7 +31,7 @@ const rule: Rule.RuleModule = {
       description: 'Enforce high cohesion within functions by checking variable usage across code blocks',
       category: 'Best Practices',
       recommended: false,
-      url: ''
+      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/low-function-cohesion.md'
     },
     fixable: undefined,
     schema: [

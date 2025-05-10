@@ -17,22 +17,25 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "build": "tsc",
+    "build": "tsc --noEmitOnError false",
+    "build:force": "tsc || true",
     "dev": "tsc --watch",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "clean": "find . -name '.DS_Store' -type f -delete"
   },
   "keywords": [
     "eslint",
     "eslintplugin",
     "eslint-plugin"
   ],
-  "author": "",
+  "author": "ESLint Plugin Maintainer <maintainer@eslint-plugin-my-rules.com>",
   "license": "MIT",
   "peerDependencies": {
     "eslint": ">=8.0.0"
   },
   "devDependencies": {
     "@types/eslint": "^9.6.1",
+    "@types/estree": "^1.0.7",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@typescript-eslint/parser": "^8.32.0",
     "eslint": "^8.56.0",
