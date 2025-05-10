@@ -1,6 +1,6 @@
 /**
  * @fileoverview Rule to disallow boolean parameters in function declarations
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
@@ -16,7 +16,7 @@ const rule: Rule.RuleModule = {
       description: 'Disallow boolean parameters in function declarations',
       category: 'Best Practices',
       recommended: true,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/no-boolean-params.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-boolean-params.md'
     },
     fixable: 'code',
     schema: [

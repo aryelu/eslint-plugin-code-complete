@@ -1,6 +1,6 @@
-# eslint-plugin-my-rules
+# eslint-plugin-code-complete
 
-Custom ESLint rules for better code quality.
+ESLint rules to help write complete, maintainable code with better readability.
 
 ## Installation
 
@@ -10,19 +10,19 @@ You'll first need to install [ESLint](https://eslint.org/):
 npm install eslint --save-dev
 ```
 
-Next, install `eslint-plugin-my-rules`:
+Next, install `eslint-plugin-code-complete`:
 
 ```sh
-npm install eslint-plugin-my-rules --save-dev
+npm install eslint-plugin-code-complete --save-dev
 ```
 
 ## Usage
 
-Add `my-rules` to the plugins section of your `.eslintrc` configuration file:
+Add `code-complete` to the plugins section of your `.eslintrc` configuration file:
 
 ```json
 {
-  "plugins": ["my-rules"]
+  "plugins": ["code-complete"]
 }
 ```
 
@@ -31,10 +31,10 @@ Then configure the rules you want to use:
 ```json
 {
   "rules": {
-    "my-rules/no-late-argument-usage": "warn",
-    "my-rules/enforce-meaningful-names": "error",
-    "my-rules/no-magic-numbers-except-zero-one": "warn",
-    "my-rules/no-boolean-params": "warn"
+    "code-complete/no-late-argument-usage": "warn",
+    "code-complete/enforce-meaningful-names": "error",
+    "code-complete/no-magic-numbers-except-zero-one": "warn",
+    "code-complete/no-boolean-params": "warn"
   }
 }
 ```
@@ -249,8 +249,8 @@ To set up the local development environment:
 
 ```sh
 # Clone the repository
-git clone https://github.com/your-username/eslint-plugin-my-rules.git
-cd eslint-plugin-my-rules
+git clone https://github.com/your-username/eslint-plugin-code-complete.git
+cd eslint-plugin-code-complete
 
 # Install dependencies
 npm install

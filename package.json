@@ -1,7 +1,7 @@
 {
-  "name": "eslint-plugin-my-rules",
+  "name": "eslint-plugin-code-complete",
   "version": "1.0.0",
-  "description": "Custom ESLint rules for better code quality",
+  "description": "ESLint rules to help write complete, maintainable code with better readability",
   "type": "module",
   "main": "dist/index.js",
   "exports": {
@@ -28,7 +28,7 @@
     "eslintplugin",
     "eslint-plugin"
   ],
-  "author": "ESLint Plugin Maintainer <maintainer@eslint-plugin-my-rules.com>",
+  "author": "Arye Lukashevski <arye.lu@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
     "eslint": ">=8.0.0"

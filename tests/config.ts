@@ -1,5 +1,11 @@
 import { RuleTester } from 'eslint';
 
+// Override the types for RuleTester to allow for the parser property
+interface RuleTesterConfig {
+  parser?: string;
+  parserOptions?: object;
+}
+
 export const ruleTester = new RuleTester({
   parser: require.resolve('@typescript-eslint/parser'),
   parserOptions: {
@@ -9,4 +15,4 @@ export const ruleTester = new RuleTester({
       jsx: true
     }
   }
-}); 
+} as any); 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Rule to disallow magic numbers except 0 and 1
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
@@ -18,7 +18,7 @@ const rule: Rule.RuleModule = {
       description: 'Disallow magic numbers except 0 and 1',
       category: 'Best Practices',
       recommended: true,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/no-magic-numbers-except-zero-one.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-magic-numbers-except-zero-one.md'
     },
     fixable: 'code',
     schema: [

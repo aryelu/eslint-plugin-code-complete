@@ -1,6 +1,6 @@
-# Contributing to eslint-plugin-my-rules
+# Contributing to eslint-plugin-code-complete
 
-Thank you for considering contributing to this project! This document outlines the guidelines for contributing to the eslint-plugin-my-rules project.
+Thank you for considering contributing to this project! This document outlines the guidelines for contributing to the eslint-plugin-code-complete project.
 
 ## Code of Conduct
 
@@ -40,8 +40,8 @@ If you want to suggest an enhancement or a new rule, please create an issue with
 
 ```sh
 # Clone the repository
-git clone https://github.com/your-username/eslint-plugin-my-rules.git
-cd eslint-plugin-my-rules
+git clone https://github.com/your-username/eslint-plugin-code-complete.git
+cd eslint-plugin-code-complete
 
 # Install dependencies
 npm install
@@ -80,4 +80,4 @@ Update the README.md file to reflect any changes to the API or behavior of the r
 
 ## License
 
-By contributing to eslint-plugin-my-rules, you agree that your contributions will be licensed under the project's MIT License. 
+By contributing to eslint-plugin-code-complete, you agree that your contributions will be licensed under the project's MIT License. 

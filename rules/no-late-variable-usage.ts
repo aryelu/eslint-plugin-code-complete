@@ -1,10 +1,15 @@
 /**
  * @fileoverview Rule to enforce variables are used close to their declaration
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
 import { Identifier, VariableDeclaration, VariableDeclarator } from 'estree';
+
+// Extended Identifier interface to include parent property used by ESLint
+interface ExtendedIdentifier extends Identifier {
+  parent?: any;
+}
 
 interface _RuleOptions {
   maxLinesBetweenDeclarationAndUsage?: number;
@@ -17,7 +22,7 @@ const rule: Rule.RuleModule = {
       description: 'Enforce variables are used close to where they are declared',
       category: 'Best Practices',
       recommended: true,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/no-late-variable-usage.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-late-variable-usage.md'
     },
     fixable: undefined,
     schema: [
@@ -80,7 +85,7 @@ const rule: Rule.RuleModule = {
       },
       
       // Check identifier references to see if they're too far from declarations
-      Identifier(node: Identifier) {
+      Identifier(node: ExtendedIdentifier) {
         // Skip if this is a declaration, not a reference
         if (node.parent && 
             (node.parent.type === 'VariableDeclarator' && node.parent.id === node) ||

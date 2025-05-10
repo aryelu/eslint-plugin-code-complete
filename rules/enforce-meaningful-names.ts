@@ -1,6 +1,6 @@
 /**
  * @fileoverview Rule to enforce meaningful names for variables, functions, and parameters
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
@@ -15,10 +15,10 @@ const rule: Rule.RuleModule = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Enforce meaningful names for variables, functions, and parameters',
+      description: 'Enforce meaningful variable and function names',
       category: 'Best Practices',
       recommended: true,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/enforce-meaningful-names.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/enforce-meaningful-names.md'
     },
     fixable: 'code',
     schema: [

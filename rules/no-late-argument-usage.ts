@@ -1,6 +1,6 @@
 /**
  * @fileoverview Rule to prevent using function arguments after they are declared
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
@@ -14,10 +14,10 @@ const rule: Rule.RuleModule = {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Prevent using function arguments after they are declared',
+      description: 'Enforce function arguments are used early in the function body',
       category: 'Best Practices',
       recommended: true,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/no-late-argument-usage.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-late-argument-usage.md'
     },
     fixable: 'code',
     schema: [

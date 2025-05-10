@@ -1,6 +1,6 @@
 /**
  * @fileoverview Rule to detect functions with low cohesion between code blocks
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { Rule } from 'eslint';
@@ -31,7 +31,7 @@ const rule: Rule.RuleModule = {
       description: 'Enforce high cohesion within functions by checking variable usage across code blocks',
       category: 'Best Practices',
       recommended: false,
-      url: 'https://github.com/my-rules/eslint-plugin-my-rules/blob/main/docs/rules/low-function-cohesion.md'
+      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/low-function-cohesion.md'
     },
     fixable: undefined,
     schema: [

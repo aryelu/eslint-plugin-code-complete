@@ -8,15 +8,15 @@ import { RuleTester } from 'eslint';
 import rule from '../rules/no-boolean-params';
 
 const ruleTester = new RuleTester({
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
-    }
+    },
+    parser: '@typescript-eslint/parser'
   }
-});
+} as any);
 
 describe('no-boolean-params', () => {
   it('should pass valid cases', () => {
