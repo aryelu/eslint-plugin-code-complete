@@ -1,0 +1,176 @@
+# eslint-plugin-my-rules
+
+Custom ESLint rules for better code quality.
+
+## Installation
+
+You'll first need to install [ESLint](https://eslint.org/):
+
+```sh
+npm install eslint --save-dev
+```
+
+Next, install `eslint-plugin-my-rules`:
+
+```sh
+npm install eslint-plugin-my-rules --save-dev
+```
+
+## Usage
+
+Add `my-rules` to the plugins section of your `.eslintrc` configuration file:
+
+```json
+{
+  "plugins": ["my-rules"]
+}
+```
+
+Then configure the rules you want to use:
+
+```json
+{
+  "rules": {
+    "my-rules/no-late-argument-usage": "warn",
+    "my-rules/enforce-meaningful-names": "error",
+    "my-rules/no-magic-numbers-except-zero-one": "warn",
+    "my-rules/no-boolean-params": "warn"
+  }
+}
+```
+
+## Rules
+
+### no-late-argument-usage
+
+Prevents using function arguments after significant code execution. This improves readability and maintainability by ensuring arguments are used early in functions.
+
+```js
+// ❌ Bad - argument used too late
+function process(data) {
+  console.log("Step 1");
+  console.log("Step 2");
+  console.log("Step 3");
+  console.log("Step 4");
+  console.log("Step 5");
+  return data.map(item => item * 2); // data used very late
+}
+
+// ✅ Good - argument used early
+function process(data) {
+  const processedData = data.map(item => item * 2);
+  console.log("Step 1");
+  console.log("Step 2");
+  console.log("Step 3");
+  return processedData;
+}
+```
+
+#### Options
+
+- `maxCodeBetween`: Maximum number of lines allowed between first and last parameter usage (default: 5)
+
+### enforce-meaningful-names
+
+Enforces meaningful variable, function, and parameter names. This improves code readability and maintainability.
+
+```js
+// ❌ Bad - short or generic names
+function fn(d) {
+  const val = process(d);
+  return val;
+}
+
+// ✅ Good - meaningful names
+function processData(userData) {
+  const processedUserData = transform(userData);
+  return processedUserData;
+}
+```
+
+#### Options
+
+- `minLength`: Minimum allowed name length (default: 3)
+- `exceptions`: Array of allowed short names (default: `['id', 'x', 'y', 'z', 'i', 'j', 'k', 'e', '_', 'a', 'b']`)
+- `checkFunctions`: Whether to check function names (default: true)
+- `checkVariables`: Whether to check variable names (default: true)
+- `checkParameters`: Whether to check parameter names (default: true)
+- `checkProperties`: Whether to check object property names (default: false)
+
+### no-magic-numbers-except-zero-one
+
+Disallows magic numbers except 0 and 1, which are commonly used in programming without confusion.
+
+```js
+// ❌ Bad - magic numbers
+function calculateArea(width, height) {
+  if (width > 5) {
+    return width * height * 0.8; // magic numbers
+  }
+  return width * height;
+}
+
+// ✅ Good - named constants
+function calculateArea(width, height) {
+  const LARGE_WIDTH_THRESHOLD = 5;
+  const LARGE_AREA_DISCOUNT = 0.8;
+  
+  if (width > LARGE_WIDTH_THRESHOLD) {
+    return width * height * LARGE_AREA_DISCOUNT;
+  }
+  return width * height;
+}
+```
+
+#### Options
+
+- `ignore`: Array of numbers to ignore (default: `[0, 1]`)
+- `ignoreArrayIndexes`: Whether to ignore array indexes (default: true)
+- `enforceConst`: Whether to enforce constants for numbers (default: true)
+- `detectObjects`: Whether to detect magic numbers in object properties (default: false)
+
+### no-boolean-params
+
+Discourages the use of boolean parameters in function declarations to encourage more descriptive API design.
+
+```js
+// ❌ Bad - using boolean parameters
+function toggleVisibility(visible: boolean) {
+  element.style.display = visible ? 'block' : 'none';
+}
+
+// Usage is not self-describing
+toggleVisibility(true); // What does true mean here?
+
+// ✅ Good - using descriptive objects or enums
+function setVisibility({ state: 'visible' | 'hidden' }) {
+  element.style.display = state === 'visible' ? 'block' : 'none';
+}
+
+// Usage is self-describing
+setVisibility({ state: 'visible' });
+```
+
+#### Options
+
+- `ignoreDefault`: Whether to ignore parameters with boolean default values (default: false)
+
+## Development
+
+To set up the local development environment:
+
+```sh
+# Clone the repository
+git clone https://github.com/your-username/eslint-plugin-my-rules.git
+cd eslint-plugin-my-rules
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+```
+
+## License
+
+MIT 
