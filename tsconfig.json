@@ -14,11 +14,12 @@
   },
   "include": [
     "*.ts",
-    "rules/**/*.ts",
-    "tests/**/*.ts"
+    "rules/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests/**/*.ts",
+    "vitest.config.ts"
   ]
 } 
