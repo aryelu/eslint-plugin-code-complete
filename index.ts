@@ -3,12 +3,12 @@
  * @author eslint-plugin-code-complete
  */
 
-import noBooleanParams from './rules/no-boolean-params';
-import noMagicNumbersExceptZeroOne from './rules/no-magic-numbers-except-zero-one';
-import enforceMeaningfulNames from './rules/enforce-meaningful-names';
-import noLateArgumentUsage from './rules/no-late-argument-usage';
-import noLateVariableUsage from './rules/no-late-variable-usage';
-import lowFunctionCohesion from './rules/low-function-cohesion';
+import noBooleanParams from './rules/no-boolean-params.js';
+import noMagicNumbersExceptZeroOne from './rules/no-magic-numbers-except-zero-one.js';
+import enforceMeaningfulNames from './rules/enforce-meaningful-names.js';
+import noLateArgumentUsage from './rules/no-late-argument-usage.js';
+import noLateVariableUsage from './rules/no-late-variable-usage.js';
+import lowFunctionCohesion from './rules/low-function-cohesion.js';
 
 export default {
   rules: {
