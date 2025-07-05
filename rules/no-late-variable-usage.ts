@@ -5,25 +5,18 @@
 
 import { Rule } from 'eslint';
 import { Identifier, VariableDeclaration, VariableDeclarator } from 'estree';
+import { LateUsageOptions } from '../types/rule-options.js';
+import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
 
 // Extended Identifier interface to include parent property used by ESLint
 interface ExtendedIdentifier extends Identifier {
   parent?: any;
 }
 
-interface _RuleOptions {
-  maxLinesBetweenDeclarationAndUsage?: number;
-}
-
 const rule: Rule.RuleModule = {
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Enforce variables are used close to where they are declared',
-      category: 'Best Practices',
-      recommended: true,
-      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-late-variable-usage.md'
-    },
+  meta: createRuleMeta('no-late-variable-usage', {
+    description: 'Enforce variables are used close to where they are declared',
+    category: RULE_CATEGORIES.BEST_PRACTICES,
     fixable: undefined,
     schema: [
       {
@@ -40,10 +33,10 @@ const rule: Rule.RuleModule = {
     messages: {
       lateVariableUsage: 'Variable "{{name}}" is used {{lines}} lines after its declaration, which exceeds the maximum of {{max}} lines'
     }
-  },
+  }),
 
   create(context: Rule.RuleContext): Rule.RuleListener {
-    const options = context.options[0] || {};
+    const options = context.options[0] || {} as LateUsageOptions;
     const maxLines = options.maxLinesBetweenDeclarationAndUsage || 5;
     
     // Track variable declarations and their locations

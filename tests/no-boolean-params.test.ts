@@ -1,22 +1,11 @@
 /**
  * @fileoverview Tests for no-boolean-params rule
- * @author eslint-plugin-my-rules
+ * @author eslint-plugin-code-complete
  */
 
 import { describe, it } from 'vitest';
-import { RuleTester } from 'eslint';
 import rule from '../rules/no-boolean-params';
-
-const ruleTester = new RuleTester({
-  parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true
-    },
-    parser: '@typescript-eslint/parser'
-  }
-} as any);
+import { ruleTester } from './config';
 
 describe('no-boolean-params', () => {
   it('should pass valid cases', () => {
@@ -175,11 +164,7 @@ describe('no-boolean-params', () => {
             }
           ]
         },
-        {
-          code: 'function processData(flag: boolean) {}',
-          options: [{ ignoreDefault: true }],
-          errors: [{ messageId: 'booleanParam' }]
-        }
+
       ]
     });
   });

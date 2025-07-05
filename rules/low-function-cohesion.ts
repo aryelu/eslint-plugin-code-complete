@@ -4,6 +4,8 @@
  */
 
 import { Rule } from 'eslint';
+import { FunctionCohesionOptions } from '../types/rule-options.js';
+import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
 
 // Types for variable tracking
 interface VariableUsage {
@@ -25,14 +27,10 @@ interface FunctionContext {
 }
 
 const rule: Rule.RuleModule = {
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Enforce high cohesion within functions by checking variable usage across code blocks',
-      category: 'Best Practices',
-      recommended: false,
-      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/low-function-cohesion.md'
-    },
+  meta: createRuleMeta('low-function-cohesion', {
+    description: 'Enforce high cohesion within functions by checking variable usage across code blocks',
+    category: RULE_CATEGORIES.BEST_PRACTICES,
+    recommended: false,
     fixable: undefined,
     schema: [
       {
@@ -53,10 +51,10 @@ const rule: Rule.RuleModule = {
     messages: {
       lowCohesion: 'Function appears to have low cohesion – consider splitting it into smaller functions.'
     }
-  },
+  }),
 
   create(context: Rule.RuleContext): Rule.RuleListener {
-    const options = context.options[0] || {};
+    const options = context.options[0] || {} as FunctionCohesionOptions;
     const minSharedVariablePercentage = options.minSharedVariablePercentage || 30;
     const minFunctionLength = options.minFunctionLength || 10;
     

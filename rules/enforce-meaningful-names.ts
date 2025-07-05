@@ -4,22 +4,13 @@
  */
 
 import { Rule } from 'eslint';
-
-interface RuleOptions {
-  minLength?: number;
-  allowedNames?: string[];
-  disallowedNames?: string[];
-}
+import { MeaningfulNamesOptions } from '../types/rule-options.js';
+import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
 
 const rule: Rule.RuleModule = {
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Enforce meaningful variable and function names',
-      category: 'Best Practices',
-      recommended: true,
-      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/enforce-meaningful-names.md'
-    },
+  meta: createRuleMeta('enforce-meaningful-names', {
+    description: 'Enforce meaningful variable and function names',
+    category: RULE_CATEGORIES.BEST_PRACTICES,
     fixable: 'code',
     schema: [
       {
@@ -53,10 +44,10 @@ const rule: Rule.RuleModule = {
       nameNotMeaningful: 'Name "{{name}}" is not meaningful enough. Consider using a more descriptive name.',
       nameDisallowed: 'Name "{{name}}" is not allowed. Consider using a more descriptive name.'
     }
-  },
+  }),
 
   create(context: Rule.RuleContext) {
-    const options = context.options[0] || {} as RuleOptions;
+    const options = context.options[0] || {} as MeaningfulNamesOptions;
     const minLength = options.minLength || 2;
     const allowedNames = new Set(options.allowedNames || ['i', 'j', 'k', 'x', 'y', 'z']);
     const disallowedNames = new Set(options.disallowedNames || ['temp', 'tmp', 'foo', 'bar', 'baz']);

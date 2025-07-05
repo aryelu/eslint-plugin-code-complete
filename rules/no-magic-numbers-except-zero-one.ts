@@ -4,22 +4,14 @@
  */
 
 import { Rule } from 'eslint';
-
-interface RuleOptions {
-  ignore?: number[];
-  ignoreArrayIndexes?: boolean;
-  ignoreDefaultValues?: boolean;
-}
+import { MagicNumbersOptions } from '../types/rule-options.js';
+import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
+import { isAllowedNumber, isArrayIndex, isDefaultValue } from '../utils/node-helpers.js';
 
 const rule: Rule.RuleModule = {
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Disallow magic numbers except 0 and 1',
-      category: 'Best Practices',
-      recommended: true,
-      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-magic-numbers-except-zero-one.md'
-    },
+  meta: createRuleMeta('no-magic-numbers-except-zero-one', {
+    description: 'Disallow magic numbers except 0 and 1',
+    category: RULE_CATEGORIES.BEST_PRACTICES,
     fixable: 'code',
     schema: [
       {
@@ -47,43 +39,21 @@ const rule: Rule.RuleModule = {
     messages: {
       noMagicNumber: 'Magic number "{{number}}" is discouraged. Consider using a named constant instead.'
     }
-  },
+  }),
 
   create(context: Rule.RuleContext) {
-    const options = context.options[0] || {} as RuleOptions;
-    const ignore = new Set(options.ignore || []);
+    const options = context.options[0] || {} as MagicNumbersOptions;
+    const ignore = new Set<number>(options.ignore || []);
     const ignoreArrayIndexes = options.ignoreArrayIndexes !== false;
     const ignoreDefaultValues = options.ignoreDefaultValues !== false;
 
     /**
-     * Checks if a number is allowed
+     * Checks if a number is allowed using shared utility
      * @param {number} num - The number to check
      * @returns {boolean} - True if the number is allowed
      */
-    function isAllowedNumber(num: number): boolean {
-      return num === 0 || num === 1 || ignore.has(num);
-    }
-
-    /**
-     * Checks if a node is an array index
-     * @param {Object} node - The node to check
-     * @returns {boolean} - True if the node is an array index
-     */
-    function isArrayIndex(node: any): boolean {
-      return node.parent && 
-             node.parent.type === 'MemberExpression' && 
-             node.parent.property === node;
-    }
-
-    /**
-     * Checks if a node is a default value
-     * @param {Object} node - The node to check
-     * @returns {boolean} - True if the node is a default value
-     */
-    function isDefaultValue(node: any): boolean {
-      return node.parent && 
-             node.parent.type === 'AssignmentPattern' && 
-             node.parent.right === node;
+    function isAllowedNumberLocal(num: number): boolean {
+      return isAllowedNumber(num, ignore);
     }
 
     return {
@@ -93,7 +63,7 @@ const rule: Rule.RuleModule = {
         }
 
         // Skip if the number is allowed
-        if (isAllowedNumber(node.value)) {
+        if (isAllowedNumberLocal(node.value)) {
           return;
         }
 

@@ -5,20 +5,13 @@
 
 import { Rule } from 'eslint';
 import { Node, Pattern, Statement, Identifier } from 'estree';
-
-interface _RuleOptions {
-  maxLinesBetweenDeclarationAndUsage?: number;
-}
+import { LateUsageOptions } from '../types/rule-options.js';
+import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
 
 const rule: Rule.RuleModule = {
-  meta: {
-    type: 'suggestion',
-    docs: {
-      description: 'Enforce function arguments are used early in the function body',
-      category: 'Best Practices',
-      recommended: true,
-      url: 'https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/no-late-argument-usage.md'
-    },
+  meta: createRuleMeta('no-late-argument-usage', {
+    description: 'Enforce function arguments are used early in the function body',
+    category: RULE_CATEGORIES.BEST_PRACTICES,
     fixable: 'code',
     schema: [
       {
@@ -35,10 +28,10 @@ const rule: Rule.RuleModule = {
     messages: {
       lateArgumentUsage: 'Argument "{{name}}" is used {{lines}} lines after its declaration'
     }
-  },
+  }),
 
   create(context: Rule.RuleContext): Rule.RuleListener {
-    const options = context.options[0] || {};
+    const options = context.options[0] || {} as LateUsageOptions;
     const maxLines = options.maxLinesBetweenDeclarationAndUsage || 10;
 
     /**
