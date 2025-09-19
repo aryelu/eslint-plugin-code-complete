@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  id-token: write # Required for NPM provenance
+
 jobs:
   test:
     name: Test
@@ -43,38 +47,19 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
-  publish:
-    name: Publish to NPM
+  check-version:
+    name: Check for Version Change
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: production # Requires manual approval for production deploys
+    outputs:
+      version_changed: ${{ steps.version-check.outputs.version_changed }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Need full history to compare versions
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile || {
-            echo "Frozen lockfile failed, falling back to regular install"
-            pnpm install
-          }
-
-      - name: Build
-        run: pnpm run build
 
       - name: Check if version changed
         id: version-check
@@ -87,8 +72,12 @@ jobs:
             echo "No version change detected"
           fi
 
-      - name: Publish to NPM
-        if: steps.version-check.outputs.version_changed == 'true'
-        run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish:
+    name: Publish to NPM
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    uses: ./.github/workflows/npm-publish.yml
+    with:
+      use_trusted_publishing: true
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

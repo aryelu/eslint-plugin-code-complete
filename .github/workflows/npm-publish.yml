@@ -1,0 +1,69 @@
+name: NPM Publish with Trusted Publishers
+
+on:
+  workflow_call:
+    inputs:
+      use_trusted_publishing:
+        description: 'Use NPM Trusted Publishers (requires setup on npmjs.com)'
+        type: boolean
+        default: true
+    secrets:
+      NPM_TOKEN:
+        description: 'NPM token (fallback if trusted publishing not configured)'
+        required: false
+
+permissions:
+  contents: read
+  id-token: write # Required for NPM trusted publishing
+
+jobs:
+  publish:
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile || {
+            echo "Frozen lockfile failed, falling back to regular install"
+            pnpm install
+          }
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Publish with Trusted Publishers
+        if: ${{ inputs.use_trusted_publishing }}
+        run: |
+          echo "Publishing with NPM Trusted Publishers (provenance enabled)"
+          pnpm publish --no-git-checks --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish with Token (Fallback)
+        if: ${{ !inputs.use_trusted_publishing }}
+        run: |
+          echo "Publishing with NPM token (fallback method)"
+          pnpm publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Output publish result
+        run: |
+          echo "✅ Package published successfully!"
+          echo "📦 Package: eslint-plugin-code-complete@$(node -p "require('./package.json').version")"
+          echo "🔗 NPM: https://www.npmjs.com/package/eslint-plugin-code-complete"
