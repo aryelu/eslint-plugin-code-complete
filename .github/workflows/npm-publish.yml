@@ -13,7 +13,7 @@ on:
         required: false
 
 permissions:
-  contents: read
+  contents: write # Required for creating tags and releases
   id-token: write # Required for NPM trusted publishing
 
 jobs:
@@ -62,8 +62,47 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Get package version
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create git tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "v${{ steps.package-version.outputs.version }}" -m "Release v${{ steps.package-version.outputs.version }}"
+          git push origin "v${{ steps.package-version.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.package-version.outputs.version }}
+          release_name: Release v${{ steps.package-version.outputs.version }}
+          body: |
+            ## 📦 eslint-plugin-code-complete v${{ steps.package-version.outputs.version }}
+
+            ### Installation
+            ```bash
+            npm install eslint-plugin-code-complete@${{ steps.package-version.outputs.version }}
+            ```
+
+            ### What's Changed
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+
+            ### Verification
+            This package was published with provenance statements for enhanced security and transparency.
+
+            ---
+            🔗 **NPM Package**: https://www.npmjs.com/package/eslint-plugin-code-complete
+          draft: false
+          prerelease: false
+
       - name: Output publish result
         run: |
           echo "✅ Package published successfully!"
-          echo "📦 Package: eslint-plugin-code-complete@$(node -p "require('./package.json').version")"
+          echo "📦 Package: eslint-plugin-code-complete@${{ steps.package-version.outputs.version }}"
           echo "🔗 NPM: https://www.npmjs.com/package/eslint-plugin-code-complete"
+          echo "🏷️ Tag: v${{ steps.package-version.outputs.version }}"
+          echo "🚀 Release: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.package-version.outputs.version }}"
