@@ -27,7 +27,7 @@ export function createRuleMeta(ruleName: string, options: RuleMetaOptions): Rule
       description: options.description,
       category: options.category || 'Best Practices',
       recommended: options.recommended !== false, // Default to true
-      url: `https://github.com/code-complete/eslint-plugin-code-complete/blob/main/docs/rules/${ruleName}.md`
+      url: `https://github.com/aryelukashevski/eslint-plugin-code-complete/blob/main/docs/rules/${ruleName}.md`
     },
     fixable: options.fixable,
     schema: options.schema || [],

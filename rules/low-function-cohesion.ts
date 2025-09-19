@@ -217,7 +217,7 @@ const rule: Rule.RuleModule = {
       },
       
       // Track entering code blocks
-      IfStatement(_node) {
+      IfStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -226,7 +226,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      ForStatement(_node) {
+      ForStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -235,7 +235,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      ForInStatement(_node) {
+      ForInStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -244,7 +244,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      ForOfStatement(_node) {
+      ForOfStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -253,7 +253,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      WhileStatement(_node) {
+      WhileStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -262,7 +262,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      DoWhileStatement(_node) {
+      DoWhileStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -271,7 +271,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      SwitchStatement(_node) {
+      SwitchStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({
@@ -280,7 +280,7 @@ const rule: Rule.RuleModule = {
         });
       },
       
-      TryStatement(_node) {
+      TryStatement() {
         if (functionStack.length === 0) return;
         
         blockStack.push({

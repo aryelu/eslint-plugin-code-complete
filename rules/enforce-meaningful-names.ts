@@ -59,7 +59,7 @@ const rule: Rule.RuleModule = {
      * @param {string} type - The type of the node (variable, function, parameter)
      * @returns {boolean} - True if the name is meaningful
      */
-    function checkName(name: string, node: any, _type: string): void {
+    function checkName(name: string, node: any): void {
       // Skip if name is in allowed list
       if (allowedNames.has(name)) {
         return;
@@ -107,25 +107,25 @@ const rule: Rule.RuleModule = {
 
     return {
       FunctionDeclaration(node: any) {
-        checkName(node.id.name, node.id, 'function');
+        checkName(node.id.name, node.id);
         
         // Check parameters
         node.params.forEach((param: any) => {
           if (param.type === 'Identifier') {
-            checkName(param.name, param, 'parameter');
+            checkName(param.name, param);
           }
         });
       },
 
       FunctionExpression(node: any) {
         if (node.id) {
-          checkName(node.id.name, node.id, 'function');
+          checkName(node.id.name, node.id);
         }
         
         // Check parameters
         node.params.forEach((param: any) => {
           if (param.type === 'Identifier') {
-            checkName(param.name, param, 'parameter');
+            checkName(param.name, param);
           }
         });
       },
@@ -134,20 +134,20 @@ const rule: Rule.RuleModule = {
         // Check parameters
         node.params.forEach((param: any) => {
           if (param.type === 'Identifier') {
-            checkName(param.name, param, 'parameter');
+            checkName(param.name, param);
           }
         });
       },
 
       VariableDeclarator(node: any) {
         if (node.id.type === 'Identifier') {
-          checkName(node.id.name, node.id, 'variable');
+          checkName(node.id.name, node.id);
         }
       },
 
       Property(node: any) {
         if (node.key.type === 'Identifier' && !node.computed) {
-          checkName(node.key.name, node.key, 'property');
+          checkName(node.key.name, node.key);
         }
       }
     };
