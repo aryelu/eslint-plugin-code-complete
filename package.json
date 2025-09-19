@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aryelu/code-complete-eslint.git"
+    "url": "https://github.com/aryelu/eslint-plugin-code-complete.git"
   },
   "bugs": {
-    "url": "https://github.com/aryelu/code-complete-eslint/issues"
+    "url": "https://github.com/aryelu/eslint-plugin-code-complete/issues"
   },
-  "homepage": "https://github.com/aryelu/code-complete-eslint#readme",
+  "homepage": "https://github.com/aryelu/eslint-plugin-code-complete#readme",
   "peerDependencies": {
     "eslint": ">=9.0.0"
   },
