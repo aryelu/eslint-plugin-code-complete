@@ -89,7 +89,7 @@ jobs:
             ```
 
             ### What's Changed
-            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+            See [CHANGELOG.md](https://github.com/aryelu/code-complete-eslint/blob/main/CHANGELOG.md) for detailed changes.
 
             ### Verification
             This package was published with provenance statements for enhanced security and transparency.
@@ -105,4 +105,4 @@ jobs:
           echo "📦 Package: eslint-plugin-code-complete@${{ steps.package-version.outputs.version }}"
           echo "🔗 NPM: https://www.npmjs.com/package/eslint-plugin-code-complete"
           echo "🏷️ Tag: v${{ steps.package-version.outputs.version }}"
-          echo "🚀 Release: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.package-version.outputs.version }}"
+          echo "🚀 Release: https://github.com/aryelu/code-complete-eslint/releases/tag/v${{ steps.package-version.outputs.version }}"

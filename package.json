@@ -30,6 +30,14 @@
   ],
   "author": "Arye Lukashevski <arye.lu@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aryelu/code-complete-eslint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aryelu/code-complete-eslint/issues"
+  },
+  "homepage": "https://github.com/aryelu/code-complete-eslint#readme",
   "peerDependencies": {
     "eslint": ">=9.0.0"
   },
