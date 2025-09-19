@@ -11,6 +11,12 @@ on:
       NPM_TOKEN:
         description: 'NPM token (fallback if trusted publishing not configured)'
         required: false
+  workflow_dispatch:
+    inputs:
+      use_trusted_publishing:
+        description: 'Use NPM Trusted Publishers (requires setup on npmjs.com)'
+        type: boolean
+        default: true
 
 permissions:
   contents: write # Required for creating tags and releases
