@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-09-19
+
+### Changed
+- Migrated from deprecated .eslintrc.json to modern eslint.config.js flat config
+- Updated pnpm version to 9.6.0 and regenerated lockfile for better CI compatibility
+- Fixed CI/CD workflow execution order (build → lint → test)
+
+### Fixed
+- Removed all unused parameter warnings in rule implementations
+- Fixed pnpm lockfile compatibility issues in GitHub Actions workflows
+- Added fallback strategies for frozen-lockfile installations in CI
+
+### Added
+- Comprehensive GitHub Actions CI/CD pipeline with multi-Node.js testing (18, 20, 22)
+- Production environment protection for NPM publishing with manual approval
+- Complete rule documentation in `docs/rules/` directory with examples and configuration options
+- Security documentation and branch protection setup guides
+- Automatic release workflow with version bumping and changelog updates
+
 ## [1.1.0] - 2025-01-17
 
 ### Added
