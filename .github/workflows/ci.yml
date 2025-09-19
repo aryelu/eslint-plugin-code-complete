@@ -34,14 +34,14 @@ jobs:
             echo "Frozen lockfile failed"
           }
 
+      - name: Build
+        run: pnpm run build
+
       - name: Run lint
         run: pnpm run lint
 
       - name: Run tests
         run: pnpm run test
-
-      - name: Build
-        run: pnpm run build
 
   publish:
     name: Publish to NPM

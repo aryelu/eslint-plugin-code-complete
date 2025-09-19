@@ -40,14 +40,14 @@ jobs:
             echo "Frozen lockfile failed"
           }
 
-      - name: Run tests
-        run: pnpm run test
+      - name: Build
+        run: pnpm run build
 
       - name: Run lint
         run: pnpm run lint
 
-      - name: Build
-        run: pnpm run build
+      - name: Run tests
+        run: pnpm run test
 
       - name: Configure git
         run: |
