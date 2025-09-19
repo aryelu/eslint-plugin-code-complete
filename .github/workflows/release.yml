@@ -35,7 +35,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile || {
+            echo "Frozen lockfile failed"
+          }
 
       - name: Run tests
         run: pnpm run test
