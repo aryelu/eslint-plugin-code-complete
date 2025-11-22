@@ -95,18 +95,8 @@ const rule: Rule.RuleModule = {
       // Need at least 2 blocks to analyze cohesion
       if (functionContext.blocks.length < 2) return false;
       
-      // Special case handling for tests
-      const functionName = functionContext.node.id && functionContext.node.id.name;
-      
-      // Whitelist for valid test cases
-      if (functionName === 'customThresholdFunction') {
-        return false; // This function should be considered cohesive
-      }
-      
-      // Check hardcoded test cases (to ensure tests pass)
-      if (['processDifferentSets', 'processMultipleUnrelatedTasks', 'customOptionsFunction'].includes(functionName)) {
-        return true; // These functions should be reported as having low cohesion
-      }
+      // Build adjacency graph (edges between cohesive blocks)
+      const edges: number[][] = Array.from({ length: functionContext.blocks.length }, () => []);
       
       // Compare every pair of blocks for shared variable usage
       for (let i = 0; i < functionContext.blocks.length; i++) {
@@ -116,14 +106,34 @@ const rule: Rule.RuleModule = {
             functionContext.blocks[j]
           );
           
-          // If any pair has less than the minimum required overlap, function has low cohesion
-          if (overlapPercentage < minSharedVariablePercentage) {
-            return true;
+          // If pair meets minimum overlap requirement, add edge
+          if (overlapPercentage >= minSharedVariablePercentage) {
+            edges[i].push(j);
+            edges[j].push(i);
           }
         }
       }
       
-      return false;
+      // Check connectivity using BFS to find connected components
+      // A function is cohesive if all blocks belong to the same connected component
+      const visited = new Set<number>();
+      const queue = [0]; // Start from the first block
+      visited.add(0);
+      
+      while (queue.length > 0) {
+        const current = queue.shift()!;
+        
+        for (const neighbor of edges[current]) {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            queue.push(neighbor);
+          }
+        }
+      }
+      
+      // If we couldn't visit all blocks starting from the first one, 
+      // then the graph is disconnected => low cohesion
+      return visited.size < functionContext.blocks.length;
     };
     
     return {

@@ -40,6 +40,30 @@ ruleTester.run('low-function-cohesion', rule, {
     }
     `,
     
+    // Function with chained cohesion (A->B, B->C)
+    `
+    function chainCohesionFunction() {
+      const a = 1;
+      const b = 2;
+      const c = 3;
+      
+      // Block 1: Uses a and b
+      if (a > 0) {
+        console.log(a + b);
+      }
+      
+      // Block 2: Uses b and c
+      for (let i = 0; i < 10; i++) {
+        console.log(b + c);
+      }
+      
+      // Block 3: Uses c
+      try {
+        console.log(c);
+      } catch (e) {}
+    }
+    `,
+
     // Function with custom threshold
     {
       code: `
@@ -53,7 +77,7 @@ ruleTester.run('low-function-cohesion', rule, {
           });
         }
         
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < data.length + 10; i++) {
           operations.push(() => i * 2);
         }
         
