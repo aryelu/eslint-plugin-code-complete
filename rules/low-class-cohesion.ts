@@ -196,7 +196,7 @@ const rule: Rule.RuleModule = {
         // Skip constructors
         if (node.kind === 'constructor') return;
         
-        const methodName = node.key && node.key.name ? node.key.name : 'anonymous';
+        const methodName = node.key && node.key.type === 'Identifier' && node.key.name ? node.key.name : 'anonymous';
         
         currentMethod = {
           name: methodName,
@@ -218,7 +218,7 @@ const rule: Rule.RuleModule = {
         
         // Check if accessing via 'this'
         if (node.object && node.object.type === 'ThisExpression') {
-          if (node.property && node.property.name) {
+          if (node.property && node.property.type === 'Identifier' && node.property.name) {
             currentMethod.usedMembers.add(node.property.name);
           }
         }
@@ -228,4 +228,3 @@ const rule: Rule.RuleModule = {
 };
 
 export default rule;
-
