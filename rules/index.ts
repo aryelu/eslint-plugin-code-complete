@@ -3,4 +3,5 @@ export { default as noMagicNumbersExceptZeroOne } from './no-magic-numbers-excep
 export { default as enforceMeaningfulNames } from './enforce-meaningful-names';
 export { default as noLateArgumentUsage } from './no-late-argument-usage';
 export { default as noLateVariableUsage } from './no-late-variable-usage';
-export { default as lowFunctionCohesion } from './low-function-cohesion'; 
+export { default as lowFunctionCohesion } from './low-function-cohesion';
+export { default as lowClassCohesion } from './low-class-cohesion'; 

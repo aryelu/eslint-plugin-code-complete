@@ -31,4 +31,8 @@ export interface LateUsageOptions extends BaseRuleOptions {
 export interface FunctionCohesionOptions extends BaseRuleOptions {
   minSharedVariablePercentage?: number;
   minFunctionLength?: number;
+}
+
+export interface ClassCohesionOptions extends BaseRuleOptions {
+  minClassLength?: number;
 } 
