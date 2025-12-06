@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/aryelu/eslint-plugin-code-complete/compare/v1.1.3...v1.2.0) (2025-12-06)
+
+
+### Features
+
+* Add low-class-cohesion rule implementation: detects classes with multiple responsibilities using LCOM4-like metrics. Includes customizable minimum class length and updates to associated tests. ([39c1f02](https://github.com/aryelu/eslint-plugin-code-complete/commit/39c1f02ad1792bb1cd55b2113e4f0adad7b8bcba))
+* Add low-class-cohesion rule to ESLint configuration and update integration tests to include new rule. ([a5f02e8](https://github.com/aryelu/eslint-plugin-code-complete/commit/a5f02e8e6cf30a191d2f2bea95b7aa31550e3a61))
+* Enhance low-function-cohesion rule: updated message format to include function name, disconnected parts count, average sharing percentage, and threshold. Improved analysis function to return detailed cohesion metrics. ([04ffd53](https://github.com/aryelu/eslint-plugin-code-complete/commit/04ffd53fbc5e8a86fa3d58527bb53317b1cc5afd))
+
+
+### Bug Fixes
+
+* Fix message formatting in low-function-cohesion test for consistency with single quotes. ([18f8bde](https://github.com/aryelu/eslint-plugin-code-complete/commit/18f8bde814a32db3dffc536780d7e30f5eabe012))
+
 ## [1.2.0] - 2025-12-06
 
 ### Added
@@ -80,4 +94,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rule: enforce-meaningful-names
 - Rule: no-late-argument-usage
 - Rule: no-late-variable-usage
-- Rule: low-function-cohesion 
+- Rule: low-function-cohesion
