@@ -12,7 +12,8 @@ export default {
     'enforce-meaningful-names': rules.enforceMeaningfulNames,
     'no-late-argument-usage': rules.noLateArgumentUsage,
     'no-late-variable-usage': rules.noLateVariableUsage,
-    'low-function-cohesion': rules.lowFunctionCohesion
+    'low-function-cohesion': rules.lowFunctionCohesion,
+    'low-class-cohesion': rules.lowClassCohesion
   }
 };
 

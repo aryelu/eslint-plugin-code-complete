@@ -115,7 +115,8 @@ describe('ESLint 9 Integration Tests', () => {
             'code-complete/enforce-meaningful-names': 'error',
             'code-complete/no-late-argument-usage': 'error',
             'code-complete/no-late-variable-usage': 'error',
-            'code-complete/low-function-cohesion': 'error'
+            'code-complete/low-function-cohesion': 'error',
+            'code-complete/low-class-cohesion': 'error'
           }
         }
       ]
