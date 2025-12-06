@@ -306,4 +306,3 @@ ruleTester.run('low-class-cohesion', rule, {
     }
   ]
 });
-
