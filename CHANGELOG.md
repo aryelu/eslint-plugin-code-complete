@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-12-06
+
+### Added
+- New rule: `low-class-cohesion` detects classes with multiple responsibilities using LCOM4-like metrics.
+
+### Changed
+- Enhanced `low-function-cohesion` rule: improved message format and added detailed cohesion metrics (disconnected parts count, average sharing percentage).
+- Refactored `low-function-cohesion` to use adjacency graph for block connectivity analysis.
+
 ## [1.1.3] - 2025-11-22
 
 ### Changed
