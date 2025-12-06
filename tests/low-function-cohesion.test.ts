@@ -213,7 +213,7 @@ ruleTester.run('low-function-cohesion', rule, {
       `,
       errors: [
         {
-          message: "Function 'completelyDisconnected' appears to have low cohesion (2 disconnected parts, average sharing: 0%, threshold: 30%). Consider splitting it into smaller functions."
+          message: 'Function \'completelyDisconnected\' appears to have low cohesion (2 disconnected parts, average sharing: 0%, threshold: 30%). Consider splitting it into smaller functions.'
         }
       ]
     }
