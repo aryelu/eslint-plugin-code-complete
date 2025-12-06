@@ -49,7 +49,7 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      lowCohesion: 'Function appears to have low cohesion – consider splitting it into smaller functions.'
+      lowCohesion: '{{functionName}} appears to have low cohesion ({{componentCount}} disconnected parts, average sharing: {{averageOverlap}}%, threshold: {{minSharedVariablePercentage}}%). Consider splitting it into smaller functions.'
     }
   }),
 
@@ -83,21 +83,37 @@ const rule: Rule.RuleModule = {
       // Calculate percentage
       return (sharedVars.size / unionVars.size) * 100;
     };
+
+    const getFunctionName = (node: any): string => {
+      if (node.id && node.id.name) {
+        return `Function '${node.id.name}'`;
+      }
+      if (node.parent && node.parent.type === 'VariableDeclarator' && node.parent.id.name) {
+        return `Function '${node.parent.id.name}'`;
+      }
+      if (node.parent && node.parent.type === 'Property' && node.parent.key.name) {
+        return `Method '${node.parent.key.name}'`;
+      }
+      return 'Function';
+    };
     
     // Analyze a function for cohesion
-    const analyzeFunctionCohesion = (functionContext: FunctionContext): boolean => {
+    const analyzeFunctionCohesion = (functionContext: FunctionContext): { isLowCohesion: boolean; componentCount: number; averageOverlap: number } => {
       // Function needs to meet minimum length requirement
-      if (!functionContext.node.loc) return false;
+      if (!functionContext.node.loc) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
       
       const functionLength = functionContext.node.loc.end.line - functionContext.node.loc.start.line + 1;
-      if (functionLength < minFunctionLength) return false;
+      if (functionLength < minFunctionLength) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
       
       // Need at least 2 blocks to analyze cohesion
-      if (functionContext.blocks.length < 2) return false;
+      if (functionContext.blocks.length < 2) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
       
       // Build adjacency graph (edges between cohesive blocks)
       const edges: number[][] = Array.from({ length: functionContext.blocks.length }, () => []);
       
+      let totalOverlap = 0;
+      let pairCount = 0;
+
       // Compare every pair of blocks for shared variable usage
       for (let i = 0; i < functionContext.blocks.length; i++) {
         for (let j = i + 1; j < functionContext.blocks.length; j++) {
@@ -106,6 +122,9 @@ const rule: Rule.RuleModule = {
             functionContext.blocks[j]
           );
           
+          totalOverlap += overlapPercentage;
+          pairCount++;
+
           // If pair meets minimum overlap requirement, add edge
           if (overlapPercentage >= minSharedVariablePercentage) {
             edges[i].push(j);
@@ -117,23 +136,33 @@ const rule: Rule.RuleModule = {
       // Check connectivity using BFS to find connected components
       // A function is cohesive if all blocks belong to the same connected component
       const visited = new Set<number>();
-      const queue = [0]; // Start from the first block
-      visited.add(0);
-      
-      while (queue.length > 0) {
-        const current = queue.shift()!;
-        
-        for (const neighbor of edges[current]) {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            queue.push(neighbor);
+      let componentCount = 0;
+
+      for (let i = 0; i < functionContext.blocks.length; i++) {
+        if (!visited.has(i)) {
+          componentCount++;
+          const queue = [i];
+          visited.add(i);
+          
+          while (queue.length > 0) {
+            const current = queue.shift()!;
+            
+            for (const neighbor of edges[current]) {
+              if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+              }
+            }
           }
         }
       }
       
-      // If we couldn't visit all blocks starting from the first one, 
-      // then the graph is disconnected => low cohesion
-      return visited.size < functionContext.blocks.length;
+      // If we have more than 1 connected component, the graph is disconnected => low cohesion
+      return {
+        isLowCohesion: componentCount > 1,
+        componentCount,
+        averageOverlap: pairCount > 0 ? Math.round((totalOverlap / pairCount) * 10) / 10 : 0
+      };
     };
     
     return {
@@ -186,10 +215,17 @@ const rule: Rule.RuleModule = {
         
         blockStack.pop();
         
-        if (analyzeFunctionCohesion(currentFunction)) {
+        const analysis = analyzeFunctionCohesion(currentFunction);
+        if (analysis.isLowCohesion) {
           context.report({
             node,
-            messageId: 'lowCohesion'
+            messageId: 'lowCohesion',
+            data: {
+              functionName: getFunctionName(node),
+              componentCount: analysis.componentCount.toString(),
+              averageOverlap: analysis.averageOverlap.toString(),
+              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+            }
           });
         }
       },
@@ -202,10 +238,17 @@ const rule: Rule.RuleModule = {
         
         blockStack.pop();
         
-        if (analyzeFunctionCohesion(currentFunction)) {
+        const analysis = analyzeFunctionCohesion(currentFunction);
+        if (analysis.isLowCohesion) {
           context.report({
             node,
-            messageId: 'lowCohesion'
+            messageId: 'lowCohesion',
+            data: {
+              functionName: getFunctionName(node),
+              componentCount: analysis.componentCount.toString(),
+              averageOverlap: analysis.averageOverlap.toString(),
+              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+            }
           });
         }
       },
@@ -218,10 +261,17 @@ const rule: Rule.RuleModule = {
         
         blockStack.pop();
         
-        if (analyzeFunctionCohesion(currentFunction)) {
+        const analysis = analyzeFunctionCohesion(currentFunction);
+        if (analysis.isLowCohesion) {
           context.report({
             node,
-            messageId: 'lowCohesion'
+            messageId: 'lowCohesion',
+            data: {
+              functionName: getFunctionName(node),
+              componentCount: analysis.componentCount.toString(),
+              averageOverlap: analysis.averageOverlap.toString(),
+              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+            }
           });
         }
       },

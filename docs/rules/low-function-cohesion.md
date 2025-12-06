@@ -8,6 +8,16 @@ This rule analyzes functions to detect low cohesion - when a function contains c
 
 High cohesion is a key principle of good software design. When a function has low cohesion, it often means the function is violating the Single Responsibility Principle and could benefit from being broken down into smaller, more focused functions.
 
+## Message
+
+The rule reports the following information:
+- Function name
+- Number of disconnected code blocks (indicating how fragmented the function is)
+- Average shared variable percentage across blocks
+- The configured threshold used for analysis
+
+Example: `Function 'processData' appears to have low cohesion (2 disconnected parts, average sharing: 15.5%, threshold: 30%). Consider splitting it into smaller functions.`
+
 Examples of **incorrect** code for this rule:
 
 ```js

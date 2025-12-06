@@ -185,6 +185,37 @@ ruleTester.run('low-function-cohesion', rule, {
           messageId: 'lowCohesion'
         }
       ]
+    },
+
+    // Verify detailed message content
+    {
+      code: `
+      function completelyDisconnected() {
+        // Block 1: Uses a, b
+        if (true) {
+          const a = 1;
+          const b = 2;
+          const c = a + b;
+        }
+        
+        // Block 2: Uses x, y
+        // No shared variables with Block 1
+        if (true) {
+          const x = 10;
+          const y = 20;
+          const z = x + y;
+        }
+
+        // Padding to meet length requirement
+        const padding = 0;
+        return padding;
+      }
+      `,
+      errors: [
+        {
+          message: "Function 'completelyDisconnected' appears to have low cohesion (2 disconnected parts, average sharing: 0%, threshold: 30%). Consider splitting it into smaller functions."
+        }
+      ]
     }
   ]
 }); 
