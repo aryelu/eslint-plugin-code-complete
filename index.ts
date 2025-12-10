@@ -13,7 +13,8 @@ export default {
     'no-late-argument-usage': rules.noLateArgumentUsage,
     'no-late-variable-usage': rules.noLateVariableUsage,
     'low-function-cohesion': rules.lowFunctionCohesion,
-    'low-class-cohesion': rules.lowClassCohesion
+    'low-class-cohesion': rules.lowClassCohesion,
+    'no-complex-conditionals': rules.noComplexConditionals
   }
 };
 

@@ -35,4 +35,8 @@ export interface FunctionCohesionOptions extends BaseRuleOptions {
 
 export interface ClassCohesionOptions extends BaseRuleOptions {
   minClassLength?: number;
+}
+
+export interface ComplexConditionalsOptions extends BaseRuleOptions {
+  maxOperators?: number;
 } 
