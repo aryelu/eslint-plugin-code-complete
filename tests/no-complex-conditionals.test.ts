@@ -43,12 +43,12 @@ ruleTester.run('no-complex-conditionals', rule, {
       errors: [{ messageId: 'complexConditional', data: { count: '1', max: '0' } }]
     },
     {
-        code: 'for (let i = 0; a && b && c && d; i++) {}',
-        errors: [{ messageId: 'complexConditional', data: { count: '3', max: '2' } }]
+      code: 'for (let i = 0; a && b && c && d; i++) {}',
+      errors: [{ messageId: 'complexConditional', data: { count: '3', max: '2' } }]
     },
     {
-        code: 'do {} while (a && b && c && d)',
-        errors: [{ messageId: 'complexConditional', data: { count: '3', max: '2' } }]
+      code: 'do {} while (a && b && c && d)',
+      errors: [{ messageId: 'complexConditional', data: { count: '3', max: '2' } }]
     }
   ]
 });
