@@ -15,12 +15,14 @@
     "dist"
   ],
   "scripts": {
+    "pretest": "pnpm build",
     "test": "vitest run",
     "test:watch": "vitest",
     "build": "rollup -c",
     "build:force": "rollup -c || true",
     "dev": "tsc --watch",
     "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "clean": "find . -name '.DS_Store' -type f -delete"
   },
   "keywords": [
