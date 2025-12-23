@@ -30,7 +30,7 @@ If you want to suggest an enhancement or a new rule, please create an issue with
 2. Create a new branch for your changes
 3. Add or modify code
 4. Add or update tests
-5. Ensure all tests pass with `npm test`
+5. Ensure all tests pass with `pnpm test`
 6. Update documentation if necessary
 7. Submit a pull request
 
@@ -44,10 +44,10 @@ git clone https://github.com/your-username/eslint-plugin-code-complete.git
 cd eslint-plugin-code-complete
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ### Creating a New Rule
@@ -71,7 +71,7 @@ npm test
 All changes should be thoroughly tested. Run the test suite with:
 
 ```sh
-npm test
+pnpm test
 ```
 
 ## Documentation

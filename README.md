@@ -253,10 +253,10 @@ git clone https://github.com/your-username/eslint-plugin-code-complete.git
 cd eslint-plugin-code-complete
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ## GitHub Repository
@@ -266,7 +266,7 @@ This project is available on GitHub. To contribute:
 1. Fork the repository
 2. Create a new branch (`git checkout -b feature/amazing-rule`)
 3. Make your changes
-4. Run tests to ensure they pass (`npm test`)
+4. Run tests to ensure they pass (`pnpm test`)
 5. Commit your changes (`git commit -am 'Add amazing rule'`)
 6. Push to the branch (`git push origin feature/amazing-rule`)
 7. Create a new Pull Request
