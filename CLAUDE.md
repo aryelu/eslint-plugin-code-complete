@@ -84,6 +84,7 @@ This plugin supports ESLint 9's flat config system:
 6. **low-function-cohesion** - Detect functions doing unrelated tasks
 7. **low-class-cohesion** - Detect classes with unrelated methods
 8. **no-complex-conditionals** - Limit conditional complexity
+9. **max-nesting-depth** - Enforce maximum nesting depth for control structures (default: 3 levels)
 
 ## Development Workflow
 
