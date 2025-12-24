@@ -14,7 +14,8 @@ export default {
     'no-late-variable-usage': rules.noLateVariableUsage,
     'low-function-cohesion': rules.lowFunctionCohesion,
     'low-class-cohesion': rules.lowClassCohesion,
-    'no-complex-conditionals': rules.noComplexConditionals
+    'no-complex-conditionals': rules.noComplexConditionals,
+    'max-nesting-depth': rules.maxNestingDepth
   }
 };
 
