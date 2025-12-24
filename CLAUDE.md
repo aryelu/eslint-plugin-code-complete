@@ -84,6 +84,7 @@ This plugin supports ESLint 9's flat config system:
 6. **low-function-cohesion** - Detect functions doing unrelated tasks
 7. **low-class-cohesion** - Detect classes with unrelated methods
 8. **no-complex-conditionals** - Limit conditional complexity
+9. **max-nesting-depth** - Enforce maximum nesting depth for control structures (default: 3 levels)
 
 ## Development Workflow
 
@@ -119,3 +120,43 @@ This plugin supports ESLint 9's flat config system:
 - ESLint's `RuleTester` is used for rule testing
 - All tests must pass before builds are considered successful
 - The `pretest` script ensures the project is built before tests run
+
+## Commit Message Conventions
+
+This project uses **Conventional Commits** format for release-please automation.
+
+### Format
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Common Types
+- `feat:` - New feature (triggers minor version bump, e.g., 1.3.1 → 1.4.0)
+- `fix:` - Bug fix (triggers patch version bump, e.g., 1.3.1 → 1.3.2)
+- `docs:` - Documentation changes only
+- `chore:` - Maintenance tasks, dependency updates
+- `refactor:` - Code changes that neither fix bugs nor add features
+- `test:` - Adding or updating tests
+- `perf:` - Performance improvements
+
+### Examples
+```bash
+feat: add max-nesting-depth rule to enforce code readability
+fix: correct depth calculation in max-nesting-depth rule
+docs: update README with new rule examples
+chore(deps): update eslint to 9.30.1
+```
+
+### Breaking Changes
+Add `BREAKING CHANGE:` in the commit body or append `!` after type:
+```bash
+feat!: change default maxDepth from 3 to 2
+
+BREAKING CHANGE: The default value for maxDepth option has changed from 3 to 2.
+```
+
+**Important:** Always use conventional commits format as release-please uses these to automatically generate changelogs and version bumps.

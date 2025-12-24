@@ -39,4 +39,9 @@ export interface ClassCohesionOptions extends BaseRuleOptions {
 
 export interface ComplexConditionalsOptions extends BaseRuleOptions {
   maxOperators?: number;
+}
+
+export interface MaxNestingDepthOptions extends BaseRuleOptions {
+  maxDepth?: number;
+  ignoreTopLevelIIFE?: boolean;
 } 
