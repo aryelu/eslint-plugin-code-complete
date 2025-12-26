@@ -19,7 +19,7 @@ const rule: Rule.RuleModule = {
         properties: {
           ignoreDefault: {
             type: 'boolean',
-            default: false
+            default: true
           }
         },
         additionalProperties: false
@@ -33,7 +33,7 @@ const rule: Rule.RuleModule = {
 
   create(context: Rule.RuleContext) {
     const options = context.options[0] || {} as BooleanParamsOptions;
-    const ignoreDefault = options.ignoreDefault || false;
+    const ignoreDefault = options.ignoreDefault !== false;
 
     /**
      * Checks if a parameter name starts with an allowed prefix

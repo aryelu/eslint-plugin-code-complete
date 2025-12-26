@@ -26,14 +26,18 @@ const rule: Rule.RuleModule = {
             items: {
               type: 'string'
             },
-            default: ['i', 'j', 'k', 'x', 'y', 'z']
+            default: ['i', 'j', 'k', 'x', 'y', 'z', 'id', 'e', '_', 'a', 'b', 'c', 'db', 'fs', 'os', 'ui', 'io', 'ip', 'url', 'uri', 'api', 'btn', 'idx', 'ctx', 'req', 'res', 'err', 'msg', 'val', 'str', 'num', 'obj', 'arr', 'fn']
           },
           disallowedNames: {
             type: 'array',
             items: {
               type: 'string'
             },
-            default: ['temp', 'tmp', 'foo', 'bar', 'baz']
+            default: ['foo', 'bar', 'baz']
+          },
+          checkProperties: {
+            type: 'boolean',
+            default: false
           }
         },
         additionalProperties: false
@@ -49,8 +53,9 @@ const rule: Rule.RuleModule = {
   create(context: Rule.RuleContext) {
     const options = context.options[0] || {} as MeaningfulNamesOptions;
     const minLength = options.minLength || 2;
-    const allowedNames = new Set(options.allowedNames || ['i', 'j', 'k', 'x', 'y', 'z']);
-    const disallowedNames = new Set(options.disallowedNames || ['temp', 'tmp', 'foo', 'bar', 'baz']);
+    const allowedNames = new Set(options.allowedNames || ['i', 'j', 'k', 'x', 'y', 'z', 'id', 'e', '_', 'a', 'b', 'c', 'db', 'fs', 'os', 'ui', 'io', 'ip', 'url', 'uri', 'api', 'btn', 'idx', 'ctx', 'req', 'res', 'err', 'msg', 'val', 'str', 'num', 'obj', 'arr', 'fn']);
+    const disallowedNames = new Set(options.disallowedNames || ['foo', 'bar', 'baz']);
+    const checkProperties = options.checkProperties || false;
 
     /**
      * Checks if a name is meaningful
@@ -88,20 +93,6 @@ const rule: Rule.RuleModule = {
           }
         });
         return;
-      }
-
-      // Check if name is meaningful (contains at least one vowel and one consonant)
-      const hasVowel = /[aeiouy]/i.test(name);
-      const hasConsonant = /[bcdfghjklmnpqrstvwxz]/i.test(name);
-      
-      if (!hasVowel || !hasConsonant) {
-        context.report({
-          node,
-          messageId: 'nameNotMeaningful',
-          data: {
-            name
-          }
-        });
       }
     }
 
@@ -146,7 +137,7 @@ const rule: Rule.RuleModule = {
       },
 
       Property(node: any) {
-        if (node.key.type === 'Identifier' && !node.computed) {
+        if (checkProperties && node.key.type === 'Identifier' && !node.computed) {
           checkName(node.key.name, node.key);
         }
       }

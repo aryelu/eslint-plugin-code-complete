@@ -18,25 +18,49 @@ npm install eslint-plugin-code-complete --save-dev
 
 ## Usage
 
-Add `code-complete` to the plugins section of your `.eslintrc` configuration file:
+### Preset Configurations (Recommended)
 
-```json
-{
-  "plugins": ["code-complete"]
-}
+The easiest way to use this plugin is with one of the preset configurations:
+
+```javascript
+// eslint.config.js (ESLint 9 Flat Config)
+import codeComplete from 'eslint-plugin-code-complete';
+
+export default [
+  codeComplete.configs.recommended, // Balanced defaults for most projects
+  // Or use:
+  // codeComplete.configs.strict,   // Maximum code quality enforcement
+  // codeComplete.configs.relaxed,  // Minimal enforcement
+];
 ```
 
-Then configure the rules you want to use:
+**Available Presets:**
 
-```json
-{
-  "rules": {
-    "code-complete/no-late-argument-usage": "warn",
-    "code-complete/enforce-meaningful-names": "error",
-    "code-complete/no-magic-numbers-except-zero-one": "warn",
-    "code-complete/no-boolean-params": "warn"
+- **`recommended`** - Balanced defaults suitable for most projects. Enables readability rules as warnings, disables noisy rules by default.
+- **`strict`** - All rules enabled with strict settings for maximum code quality. Best for new projects or when refactoring.
+- **`relaxed`** - Minimal enforcement, only enables critical readability rules. Good for legacy codebases.
+
+### Manual Configuration
+
+You can also configure individual rules:
+
+```javascript
+// eslint.config.js
+import codeComplete from 'eslint-plugin-code-complete';
+
+export default [
+  {
+    plugins: {
+      'code-complete': codeComplete
+    },
+    rules: {
+      'code-complete/no-late-argument-usage': 'warn',
+      'code-complete/enforce-meaningful-names': 'error',
+      'code-complete/no-magic-numbers-except-zero-one': 'warn',
+      'code-complete/no-boolean-params': 'warn'
+    }
   }
-}
+];
 ```
 
 ## Rules
@@ -90,16 +114,14 @@ function processData(userData) {
 
 #### Options
 
-- `minLength`: Minimum allowed name length (default: 3)
-- `exceptions`: Array of allowed short names (default: `['id', 'x', 'y', 'z', 'i', 'j', 'k', 'e', '_', 'a', 'b']`)
-- `checkFunctions`: Whether to check function names (default: true)
-- `checkVariables`: Whether to check variable names (default: true)
-- `checkParameters`: Whether to check parameter names (default: true)
+- `minLength`: Minimum allowed name length (default: 2)
+- `allowedNames`: Array of allowed short names (default: `['i', 'j', 'k', 'x', 'y', 'z', 'id', 'e', '_', 'a', 'b', 'c', 'db', 'fs', 'os', 'ui', 'io', 'ip', 'url', 'uri', 'api', 'btn', 'idx', 'ctx', 'req', 'res', 'err', 'msg', 'val', 'str', 'num', 'obj', 'arr', 'fn']`)
+- `disallowedNames`: Array of names that should not be used (default: `['foo', 'bar', 'baz']`)
 - `checkProperties`: Whether to check object property names (default: false)
 
 ### no-magic-numbers-except-zero-one
 
-Disallows magic numbers except 0 and 1, which are commonly used in programming without confusion.
+Disallows magic numbers except commonly used values (0, 1, -1, 2, 10, 24, 60, 100, 1000) which are typically clear in context.
 
 ```js
 // ❌ Bad - magic numbers
@@ -124,10 +146,9 @@ function calculateArea(width, height) {
 
 #### Options
 
-- `ignore`: Array of numbers to ignore (default: `[0, 1]`)
+- `ignore`: Array of numbers to ignore (default: `[0, 1, -1, 2, 10, 24, 60, 100, 1000]`)
 - `ignoreArrayIndexes`: Whether to ignore array indexes (default: true)
-- `enforceConst`: Whether to enforce constants for numbers (default: true)
-- `detectObjects`: Whether to detect magic numbers in object properties (default: false)
+- `ignoreDefaultValues`: Whether to ignore default parameter values (default: true)
 
 ### no-boolean-params
 
@@ -153,7 +174,7 @@ setVisibility({ state: 'visible' });
 
 #### Options
 
-- `ignoreDefault`: Whether to ignore parameters with boolean default values (default: false)
+- `ignoreDefault`: Whether to ignore parameters with boolean default values (default: true)
 
 ### no-late-variable-usage
 

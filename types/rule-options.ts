@@ -21,6 +21,7 @@ export interface MeaningfulNamesOptions extends BaseRuleOptions {
   minLength?: number;
   allowedNames?: string[];
   disallowedNames?: string[];
+  checkProperties?: boolean;
 }
 
 export interface LateUsageOptions extends BaseRuleOptions {

@@ -21,29 +21,29 @@ ruleTester.run('enforce-meaningful-names', rule, {
   ],
 
   invalid: [
-    // Function with not meaningful name (no vowels)
+    // Disallowed name
     {
-      code: 'function fn() { return true; }',
+      code: 'const foo = 42;',
       errors: [
         {
-          messageId: 'nameNotMeaningful',
-          data: { name: 'fn' }
+          messageId: 'nameDisallowed',
+          data: { name: 'foo' }
         }
       ]
     },
-    
-    // Too short variable name
+
+    // Too short variable name (not in allowed list)
     {
-      code: 'const a = 42;',
-      options: [{ minLength: 2 }],
+      code: 'const qq = 42;',
+      options: [{ minLength: 3 }],
       errors: [
         {
           messageId: 'nameTooShort',
-          data: { name: 'a', minLength: 2 }
+          data: { name: 'qq', minLength: 3 }
         }
       ]
     },
-    
+
     // Too short function name
     {
       code: 'function f() {}',

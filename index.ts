@@ -4,6 +4,9 @@
  */
 
 import * as rules from './rules/index.js';
+import recommended from './configs/recommended.js';
+import strict from './configs/strict.js';
+import relaxed from './configs/relaxed.js';
 
 export default {
   rules: {
@@ -16,6 +19,11 @@ export default {
     'low-class-cohesion': rules.lowClassCohesion,
     'no-complex-conditionals': rules.noComplexConditionals,
     'max-nesting-depth': rules.maxNestingDepth
+  },
+  configs: {
+    recommended,
+    strict,
+    relaxed
   }
 };
 

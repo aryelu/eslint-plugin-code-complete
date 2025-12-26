@@ -70,9 +70,9 @@ describe('ESLint 9 Integration Tests', () => {
 
     const testCode = `
       function badFunction(enabled: boolean) {
-        const temp = 42;
-        const tmp = 100;
-        return enabled ? temp : tmp;
+        const foo = 42;
+        const bar = 5000;
+        return enabled ? foo : bar;
       }
     `;
 
@@ -82,7 +82,7 @@ describe('ESLint 9 Integration Tests', () => {
 
     console.log('Test 2 messages:', results[0].messages);
     expect(results).toHaveLength(1);
-    expect(results[0].messages.length).toBeGreaterThanOrEqual(3);
+    expect(results[0].messages.length).toBeGreaterThanOrEqual(4);
     
     // Should have boolean param error
     expect(results[0].messages.some(msg => 
@@ -161,11 +161,12 @@ describe('ESLint 9 Integration Tests', () => {
     });
 
     const testCode = `
-      function fn() {
-        const temp = 42;
-        return temp;
+      function process() {
+        const foo = 42;
+        const bar = 100;
+        return foo + bar;
       }
-      
+
       function calculateTotal() {
         const itemCount = 42;
         return itemCount;
@@ -178,11 +179,11 @@ describe('ESLint 9 Integration Tests', () => {
 
     console.log('Test 4 messages:', results[0].messages);
     expect(results).toHaveLength(1);
-    
-    // Should have errors for meaningless names
+
+    // Should have errors for disallowed names (foo, bar)
     const nameErrors = results[0].messages.filter(
       msg => msg.ruleId === 'code-complete/enforce-meaningful-names'
     );
-    expect(nameErrors.length).toBeGreaterThan(0);
+    expect(nameErrors.length).toBeGreaterThanOrEqual(2);
   });
 }); 

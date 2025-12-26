@@ -22,7 +22,7 @@ const rule: Rule.RuleModule = {
             items: {
               type: 'number'
             },
-            default: []
+            default: [0, 1, -1, 2, 10, 24, 60, 100, 1000]
           },
           ignoreArrayIndexes: {
             type: 'boolean',
@@ -43,7 +43,7 @@ const rule: Rule.RuleModule = {
 
   create(context: Rule.RuleContext) {
     const options = context.options[0] || {} as MagicNumbersOptions;
-    const ignore = new Set<number>(options.ignore || []);
+    const ignore = new Set<number>(options.ignore || [0, 1, -1, 2, 10, 24, 60, 100, 1000]);
     const ignoreArrayIndexes = options.ignoreArrayIndexes !== false;
     const ignoreDefaultValues = options.ignoreDefaultValues !== false;
 
