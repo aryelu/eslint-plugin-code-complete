@@ -89,4 +89,141 @@ export function getParameterName(param: any): string | null {
     return param.left.name;
   }
   return null; // Skip complex patterns like destructuring
+}
+
+/**
+ * Checks if an import is type-only (TypeScript)
+ * @param {Object} node - The ImportDeclaration node
+ * @returns {boolean} - True if it's a type-only import
+ */
+export function isTypeOnlyImport(node: any): boolean {
+  // Check for `import type { ... }` syntax
+  if (node.importKind === 'type') return true;
+
+  // Check if all specifiers are type imports
+  if (node.specifiers && node.specifiers.length > 0) {
+    return node.specifiers.every((s: any) => s.importKind === 'type');
+  }
+
+  return false;
+}
+
+/**
+ * JavaScript built-in objects that should typically be ignored in coupling analysis
+ */
+export const JAVASCRIPT_BUILTINS = new Set([
+  // Global objects
+  'console', 'Math', 'JSON', 'Object', 'Array', 'String', 'Number',
+  'Boolean', 'Date', 'RegExp', 'Error', 'Promise', 'Map', 'Set',
+  'WeakMap', 'WeakSet', 'Symbol', 'Proxy', 'Reflect', 'Intl',
+  // Global functions
+  'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'encodeURI',
+  'decodeURI', 'encodeURIComponent', 'decodeURIComponent',
+  'setTimeout', 'setInterval', 'clearTimeout', 'clearInterval',
+  'setImmediate', 'clearImmediate', 'queueMicrotask',
+  // Web APIs
+  'fetch', 'URL', 'URLSearchParams', 'atob', 'btoa',
+  'Blob', 'File', 'FileReader', 'FormData', 'Headers', 'Request', 'Response',
+  // Special values
+  'Infinity', 'NaN', 'undefined', 'globalThis', 'window', 'document',
+  'navigator', 'location', 'history', 'localStorage', 'sessionStorage',
+  // Error types
+  'TypeError', 'ReferenceError', 'SyntaxError', 'RangeError', 'EvalError', 'URIError',
+  // Typed arrays
+  'ArrayBuffer', 'DataView', 'Int8Array', 'Uint8Array', 'Int16Array',
+  'Uint16Array', 'Int32Array', 'Uint32Array', 'Float32Array', 'Float64Array',
+  'BigInt64Array', 'BigUint64Array', 'SharedArrayBuffer', 'Atomics',
+  // Other built-ins
+  'BigInt', 'Function', 'Generator', 'GeneratorFunction', 'AsyncFunction',
+  'AsyncGenerator', 'AsyncGeneratorFunction', 'Iterator', 'AggregateError',
+  'FinalizationRegistry', 'WeakRef', 'Temporal'
+]);
+
+/**
+ * Gets the function name from various function node types
+ * @param {Object} node - The function node
+ * @returns {string} - The function name or 'anonymous'
+ */
+export function getFunctionName(node: any): string {
+  // Named function declaration: function foo() {}
+  if (node.id && node.id.name) {
+    return node.id.name;
+  }
+
+  // Variable declarator: const foo = () => {}
+  if (node.parent && node.parent.type === 'VariableDeclarator' && node.parent.id && node.parent.id.name) {
+    return node.parent.id.name;
+  }
+
+  // Object property: { foo: () => {} }
+  if (node.parent && node.parent.type === 'Property' && node.parent.key && node.parent.key.name) {
+    return node.parent.key.name;
+  }
+
+  // Class method: class Foo { bar() {} }
+  if (node.parent && node.parent.type === 'MethodDefinition' && node.parent.key && node.parent.key.name) {
+    return node.parent.key.name;
+  }
+
+  return 'anonymous';
+}
+
+/**
+ * Gets the class name from a class node
+ * @param {Object} node - The class node
+ * @returns {string} - The class name or 'anonymous'
+ */
+export function getClassName(node: any): string {
+  // Named class: class Foo {}
+  if (node.id && node.id.name) {
+    return node.id.name;
+  }
+
+  // Variable declarator: const Foo = class {}
+  if (node.parent && node.parent.type === 'VariableDeclarator' && node.parent.id && node.parent.id.name) {
+    return node.parent.id.name;
+  }
+
+  return 'anonymous';
+}
+
+/**
+ * Counts function parameters, handling rest and destructured patterns
+ * @param {Object[]} params - Array of parameter nodes
+ * @param {Object} options - Counting options
+ * @returns {number} - Parameter count
+ */
+export function countFunctionParameters(
+  params: any[],
+  options: { countRestParams?: boolean; countDestructured?: boolean } = {}
+): number {
+  const { countRestParams = false, countDestructured = false } = options;
+  let count = 0;
+
+  for (const param of params) {
+    if (param.type === 'RestElement') {
+      // Rest parameter: (...args)
+      count += countRestParams ? 1 : 1; // Always count as 1, but could skip entirely
+    } else if (param.type === 'ObjectPattern') {
+      // Destructured object: ({ a, b, c })
+      count += countDestructured ? param.properties.length : 1;
+    } else if (param.type === 'ArrayPattern') {
+      // Destructured array: ([a, b, c])
+      count += countDestructured ? param.elements.filter(Boolean).length : 1;
+    } else if (param.type === 'AssignmentPattern') {
+      // Default parameter: (a = 1) or ({ a, b } = {})
+      if (param.left.type === 'ObjectPattern') {
+        count += countDestructured ? param.left.properties.length : 1;
+      } else if (param.left.type === 'ArrayPattern') {
+        count += countDestructured ? param.left.elements.filter(Boolean).length : 1;
+      } else {
+        count += 1;
+      }
+    } else {
+      // Regular identifier parameter
+      count += 1;
+    }
+  }
+
+  return count;
 } 

@@ -44,4 +44,25 @@ export interface ComplexConditionalsOptions extends BaseRuleOptions {
 export interface MaxNestingDepthOptions extends BaseRuleOptions {
   maxDepth?: number;
   ignoreTopLevelIIFE?: boolean;
+}
+
+export interface HighParameterCouplingOptions extends BaseRuleOptions {
+  maxParams?: number;
+  countRestParams?: boolean;
+  countDestructured?: boolean;
+  ignoreIIFE?: boolean;
+}
+
+export interface HighImportCouplingOptions extends BaseRuleOptions {
+  maxImports?: number;
+  ignoreTypeImports?: boolean;
+  ignorePatterns?: string[];
+}
+
+export interface HighFanOutOptions extends BaseRuleOptions {
+  maxFunctionFanOut?: number;
+  maxClassFanOut?: number;
+  ignoreBuiltIns?: boolean;
+  ignoreThisReferences?: boolean;
+  minFunctionLength?: number;
 } 

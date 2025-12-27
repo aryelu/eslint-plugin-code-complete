@@ -6,4 +6,7 @@ export { default as noLateVariableUsage } from './no-late-variable-usage';
 export { default as lowFunctionCohesion } from './low-function-cohesion';
 export { default as lowClassCohesion } from './low-class-cohesion';
 export { default as noComplexConditionals } from './no-complex-conditionals';
-export { default as maxNestingDepth } from './max-nesting-depth'; 
+export { default as maxNestingDepth } from './max-nesting-depth';
+export { default as highParameterCoupling } from './high-parameter-coupling';
+export { default as highImportCoupling } from './high-import-coupling';
+export { default as highFanOut } from './high-fan-out'; 

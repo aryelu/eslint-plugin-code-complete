@@ -15,7 +15,10 @@ export default {
     'low-function-cohesion': rules.lowFunctionCohesion,
     'low-class-cohesion': rules.lowClassCohesion,
     'no-complex-conditionals': rules.noComplexConditionals,
-    'max-nesting-depth': rules.maxNestingDepth
+    'max-nesting-depth': rules.maxNestingDepth,
+    'high-parameter-coupling': rules.highParameterCoupling,
+    'high-import-coupling': rules.highImportCoupling,
+    'high-fan-out': rules.highFanOut
   }
 };
 
