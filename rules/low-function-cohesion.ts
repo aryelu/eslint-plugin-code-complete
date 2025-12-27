@@ -17,6 +17,9 @@ interface VariableUsage {
 interface CodeBlock {
   node: any;
   variables: VariableUsage;
+  blockType: string;
+  startLine: number;
+  endLine: number;
 }
 
 // Function context for tracking variables
@@ -24,6 +27,14 @@ interface FunctionContext {
   node: any;
   blocks: CodeBlock[];
   variables: Set<string>;
+}
+
+// Disconnected group info for reporting
+interface DisconnectedGroup {
+  blockIndices: number[];
+  sharedVariables: string[];
+  blockTypes: string[];
+  lineRanges: string[];
 }
 
 const rule: Rule.RuleModule = {
@@ -49,7 +60,13 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      lowCohesion: '{{functionName}} appears to have low cohesion ({{componentCount}} disconnected parts, average sharing: {{averageOverlap}}%, threshold: {{minSharedVariablePercentage}}%). Consider splitting it into smaller functions.'
+      lowCohesion: `{{functionName}} has low cohesion with {{componentCount}} disconnected code sections.
+
+The code blocks in this function don't share enough variables ({{averageOverlap}}% shared, minimum required: {{minSharedVariablePercentage}}%).
+
+{{blockDetails}}
+
+Refactoring suggestion: Extract each group into a separate function. Pass shared variables as parameters.`
     }
   }),
 
@@ -98,19 +115,26 @@ const rule: Rule.RuleModule = {
     };
     
     // Analyze a function for cohesion
-    const analyzeFunctionCohesion = (functionContext: FunctionContext): { isLowCohesion: boolean; componentCount: number; averageOverlap: number } => {
+    const analyzeFunctionCohesion = (functionContext: FunctionContext): {
+      isLowCohesion: boolean;
+      componentCount: number;
+      averageOverlap: number;
+      groups: DisconnectedGroup[];
+    } => {
+      const defaultResult = { isLowCohesion: false, componentCount: 0, averageOverlap: 0, groups: [] };
+
       // Function needs to meet minimum length requirement
-      if (!functionContext.node.loc) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
-      
+      if (!functionContext.node.loc) return defaultResult;
+
       const functionLength = functionContext.node.loc.end.line - functionContext.node.loc.start.line + 1;
-      if (functionLength < minFunctionLength) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
-      
+      if (functionLength < minFunctionLength) return defaultResult;
+
       // Need at least 2 blocks to analyze cohesion
-      if (functionContext.blocks.length < 2) return { isLowCohesion: false, componentCount: 0, averageOverlap: 0 };
-      
+      if (functionContext.blocks.length < 2) return defaultResult;
+
       // Build adjacency graph (edges between cohesive blocks)
       const edges: number[][] = Array.from({ length: functionContext.blocks.length }, () => []);
-      
+
       let totalOverlap = 0;
       let pairCount = 0;
 
@@ -121,7 +145,7 @@ const rule: Rule.RuleModule = {
             functionContext.blocks[i],
             functionContext.blocks[j]
           );
-          
+
           totalOverlap += overlapPercentage;
           pairCount++;
 
@@ -132,21 +156,21 @@ const rule: Rule.RuleModule = {
           }
         }
       }
-      
+
       // Check connectivity using BFS to find connected components
-      // A function is cohesive if all blocks belong to the same connected component
       const visited = new Set<number>();
-      let componentCount = 0;
+      const groups: DisconnectedGroup[] = [];
 
       for (let i = 0; i < functionContext.blocks.length; i++) {
         if (!visited.has(i)) {
-          componentCount++;
+          const groupBlockIndices: number[] = [];
           const queue = [i];
           visited.add(i);
-          
+
           while (queue.length > 0) {
             const current = queue.shift()!;
-            
+            groupBlockIndices.push(current);
+
             for (const neighbor of edges[current]) {
               if (!visited.has(neighbor)) {
                 visited.add(neighbor);
@@ -154,15 +178,45 @@ const rule: Rule.RuleModule = {
               }
             }
           }
+
+          // Collect variables used by this group
+          const groupVars = new Set<string>();
+          const blockTypes: string[] = [];
+          const lineRanges: string[] = [];
+
+          for (const idx of groupBlockIndices) {
+            const block = functionContext.blocks[idx];
+            block.variables.reads.forEach(v => groupVars.add(v));
+            block.variables.writes.forEach(v => groupVars.add(v));
+            blockTypes.push(block.blockType);
+            lineRanges.push(`${block.startLine}-${block.endLine}`);
+          }
+
+          groups.push({
+            blockIndices: groupBlockIndices,
+            sharedVariables: Array.from(groupVars),
+            blockTypes,
+            lineRanges
+          });
         }
       }
-      
+
       // If we have more than 1 connected component, the graph is disconnected => low cohesion
       return {
-        isLowCohesion: componentCount > 1,
-        componentCount,
-        averageOverlap: pairCount > 0 ? Math.round((totalOverlap / pairCount) * 10) / 10 : 0
+        isLowCohesion: groups.length > 1,
+        componentCount: groups.length,
+        averageOverlap: pairCount > 0 ? Math.round((totalOverlap / pairCount) * 10) / 10 : 0,
+        groups
       };
+    };
+
+    // Format block details for the error message
+    const formatBlockDetails = (groups: DisconnectedGroup[]): string => {
+      return groups.map((group, idx) => {
+        const vars = group.sharedVariables.length > 0 ? group.sharedVariables.join(', ') : 'none';
+        const blocks = group.blockTypes.map((type, i) => `${type} (lines ${group.lineRanges[i]})`).join(', ');
+        return `Group ${idx + 1}: ${blocks}\n  Variables used: [${vars}]`;
+      }).join('\n');
     };
     
     return {
@@ -209,12 +263,12 @@ const rule: Rule.RuleModule = {
       // Track exiting functions
       'FunctionDeclaration:exit'(node) {
         if (functionStack.length === 0) return;
-        
+
         const currentFunction = functionStack.pop();
         if (!currentFunction) return;
-        
+
         blockStack.pop();
-        
+
         const analysis = analyzeFunctionCohesion(currentFunction);
         if (analysis.isLowCohesion) {
           context.report({
@@ -224,20 +278,21 @@ const rule: Rule.RuleModule = {
               functionName: getFunctionName(node),
               componentCount: analysis.componentCount.toString(),
               averageOverlap: analysis.averageOverlap.toString(),
-              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+              minSharedVariablePercentage: minSharedVariablePercentage.toString(),
+              blockDetails: formatBlockDetails(analysis.groups)
             }
           });
         }
       },
-      
+
       'FunctionExpression:exit'(node) {
         if (functionStack.length === 0) return;
-        
+
         const currentFunction = functionStack.pop();
         if (!currentFunction) return;
-        
+
         blockStack.pop();
-        
+
         const analysis = analyzeFunctionCohesion(currentFunction);
         if (analysis.isLowCohesion) {
           context.report({
@@ -247,20 +302,21 @@ const rule: Rule.RuleModule = {
               functionName: getFunctionName(node),
               componentCount: analysis.componentCount.toString(),
               averageOverlap: analysis.averageOverlap.toString(),
-              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+              minSharedVariablePercentage: minSharedVariablePercentage.toString(),
+              blockDetails: formatBlockDetails(analysis.groups)
             }
           });
         }
       },
-      
+
       'ArrowFunctionExpression:exit'(node) {
         if (functionStack.length === 0) return;
-        
+
         const currentFunction = functionStack.pop();
         if (!currentFunction) return;
-        
+
         blockStack.pop();
-        
+
         const analysis = analyzeFunctionCohesion(currentFunction);
         if (analysis.isLowCohesion) {
           context.report({
@@ -270,7 +326,8 @@ const rule: Rule.RuleModule = {
               functionName: getFunctionName(node),
               componentCount: analysis.componentCount.toString(),
               averageOverlap: analysis.averageOverlap.toString(),
-              minSharedVariablePercentage: minSharedVariablePercentage.toString()
+              minSharedVariablePercentage: minSharedVariablePercentage.toString(),
+              blockDetails: formatBlockDetails(analysis.groups)
             }
           });
         }
@@ -352,147 +409,114 @@ const rule: Rule.RuleModule = {
       // Track exiting code blocks
       'IfStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        // Only record if the block has variable usage
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'if',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'ForStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'for',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'ForInStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'for-in',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'ForOfStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'for-of',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'WhileStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'while',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'DoWhileStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'do-while',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'SwitchStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'switch',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
-      
+
       'TryStatement:exit'(node) {
         if (functionStack.length === 0 || blockStack.length <= 1) return;
-        
         const blockUsage = blockStack.pop();
-        if (!blockUsage) return;
-        
-        if (blockUsage.reads.size > 0 || blockUsage.writes.size > 0) {
-          const currentFunction = functionStack[functionStack.length - 1];
-          currentFunction.blocks.push({
-            node,
-            variables: {
-              reads: new Set(blockUsage.reads),
-              writes: new Set(blockUsage.writes)
-            }
-          });
-        }
+        if (!blockUsage || (blockUsage.reads.size === 0 && blockUsage.writes.size === 0)) return;
+        const currentFunction = functionStack[functionStack.length - 1];
+        currentFunction.blocks.push({
+          node,
+          variables: { reads: new Set(blockUsage.reads), writes: new Set(blockUsage.writes) },
+          blockType: 'try',
+          startLine: node.loc?.start.line || 0,
+          endLine: node.loc?.end.line || 0
+        });
       },
       
       // Track variable usage

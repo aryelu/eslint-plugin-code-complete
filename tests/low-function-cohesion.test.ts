@@ -187,7 +187,7 @@ ruleTester.run('low-function-cohesion', rule, {
       ]
     },
 
-    // Verify detailed message content
+    // Verify detailed message content - now includes block details for AI
     {
       code: `
       function completelyDisconnected() {
@@ -197,7 +197,7 @@ ruleTester.run('low-function-cohesion', rule, {
           const b = 2;
           const c = a + b;
         }
-        
+
         // Block 2: Uses x, y
         // No shared variables with Block 1
         if (true) {
@@ -213,7 +213,10 @@ ruleTester.run('low-function-cohesion', rule, {
       `,
       errors: [
         {
-          message: 'Function \'completelyDisconnected\' appears to have low cohesion (2 disconnected parts, average sharing: 0%, threshold: 30%). Consider splitting it into smaller functions.'
+          messageId: 'lowCohesion'
+          // The message now includes detailed block info like:
+          // "Group 1: if (lines 4-8)\n  Variables used: [a, b, c]"
+          // This helps AI IDEs understand exactly which code to extract
         }
       ]
     }

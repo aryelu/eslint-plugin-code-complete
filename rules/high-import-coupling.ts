@@ -37,7 +37,15 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      tooManyImports: 'File imports from {{importCount}} modules (maximum allowed: {{maxImports}}). Consider splitting this file or consolidating dependencies.'
+      tooManyImports: `File has high import coupling: {{importCount}} module imports (max: {{maxImports}}).
+
+Imported modules:
+{{importList}}
+
+Refactoring suggestions:
+1. Split this file into smaller, focused modules
+2. Create a facade/barrel that re-exports related imports
+3. Consider if some imports could be passed as dependencies instead`
     }
   }),
 
@@ -115,12 +123,17 @@ const rule: Rule.RuleModule = {
 
       'Program:exit'(): void {
         if (importSources.size > maxImports && programNode) {
+          // Format import list for the message
+          const sortedImports = Array.from(importSources).sort();
+          const importList = sortedImports.map(imp => `  - ${imp}`).join('\n');
+
           context.report({
             node: programNode,
             messageId: 'tooManyImports',
             data: {
               importCount: String(importSources.size),
-              maxImports: String(maxImports)
+              maxImports: String(maxImports),
+              importList
             }
           });
         }

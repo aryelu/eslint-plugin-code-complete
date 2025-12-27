@@ -55,8 +55,24 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      highFunctionFanOut: 'Function "{{functionName}}" calls {{fanOutCount}} external functions (maximum allowed: {{maxFanOut}}). Consider breaking down this function or using dependency injection.',
-      highClassFanOut: 'Class "{{className}}" has {{fanOutCount}} external dependencies (maximum allowed: {{maxFanOut}}). Consider extracting responsibilities or using dependency injection.'
+      highFunctionFanOut: `Function "{{functionName}}" has high fan-out: {{fanOutCount}} external calls (max: {{maxFanOut}}).
+
+External dependencies called:
+{{dependencyList}}
+
+Refactoring suggestions:
+1. Group related calls into a helper class/service
+2. Use dependency injection to pass services instead of calling them directly
+3. Consider if this function is doing too many things (Single Responsibility)`,
+      highClassFanOut: `Class "{{className}}" has high fan-out: {{fanOutCount}} external dependencies (max: {{maxFanOut}}).
+
+External dependencies:
+{{dependencyList}}
+
+Refactoring suggestions:
+1. Extract groups of related dependencies into separate service classes
+2. Use dependency injection and interfaces to reduce direct coupling
+3. Consider splitting this class into smaller, focused classes`
     }
   }),
 
@@ -211,6 +227,14 @@ const rule: Rule.RuleModule = {
     }
 
     /**
+     * Format dependency list for error message
+     */
+    function formatDependencyList(calls: Set<string>): string {
+      const sorted = Array.from(calls).sort();
+      return sorted.map(call => `  - ${call}`).join('\n');
+    }
+
+    /**
      * Exit a function context and check for high fan-out
      */
     function exitFunction(node: any): void {
@@ -232,7 +256,8 @@ const rule: Rule.RuleModule = {
           data: {
             functionName,
             fanOutCount: String(ctx.externalCalls.size),
-            maxFanOut: String(maxFunctionFanOut)
+            maxFanOut: String(maxFunctionFanOut),
+            dependencyList: formatDependencyList(ctx.externalCalls)
           }
         });
       }
@@ -267,7 +292,8 @@ const rule: Rule.RuleModule = {
           data: {
             className,
             fanOutCount: String(ctx.externalCalls.size),
-            maxFanOut: String(maxClassFanOut)
+            maxFanOut: String(maxClassFanOut),
+            dependencyList: formatDependencyList(ctx.externalCalls)
           }
         });
       }

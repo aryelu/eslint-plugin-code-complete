@@ -26,7 +26,14 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      lateArgumentUsage: 'Argument "{{name}}" is used {{lines}} lines after its declaration'
+      lateArgumentUsage: `Argument "{{name}}" is used too late: {{lines}} lines into the function (max: {{max}}).
+
+Function starts on line {{functionStart}}, argument used on line {{usageLine}}.
+
+Refactoring suggestions:
+1. Process this argument earlier in the function
+2. If the argument is only needed later, consider splitting into two functions
+3. The code before line {{usageLine}} might be a candidate for extraction`
     }
   }),
 
@@ -84,7 +91,10 @@ const rule: Rule.RuleModule = {
             messageId: 'lateArgumentUsage',
             data: {
               name: name,
-              lines: linesBetween.toString()
+              lines: linesBetween.toString(),
+              max: maxLines.toString(),
+              functionStart: functionStartLine.toString(),
+              usageLine: furthestUsage.toString()
             }
           });
         }

@@ -31,7 +31,14 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      lateVariableUsage: 'Variable "{{name}}" is used {{lines}} lines after its declaration, which exceeds the maximum of {{max}} lines'
+      lateVariableUsage: `Variable "{{name}}" is used too late: {{lines}} lines after declaration (max: {{max}}).
+
+Declared on line {{declarationLine}}, first used on line {{usageLine}}.
+
+Refactoring suggestions:
+1. Move the declaration closer to line {{usageLine}} where it's first used
+2. If the variable is needed in multiple places, consider if the function is doing too much
+3. Extract the code between declaration and usage into a separate function`
     }
   }),
 
@@ -104,7 +111,9 @@ const rule: Rule.RuleModule = {
               data: {
                 name: name,
                 lines: linesBetween.toString(),
-                max: maxLines.toString()
+                max: maxLines.toString(),
+                declarationLine: declarationLine.toString(),
+                usageLine: usageLine.toString()
               }
             });
           }

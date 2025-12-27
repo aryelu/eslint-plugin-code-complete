@@ -30,7 +30,15 @@ const rule: Rule.RuleModule = {
       }
     ],
     messages: {
-      maxNestingDepth: 'Nesting depth of {{depth}} exceeds maximum allowed depth of {{maxDepth}}. Consider refactoring with guard clauses or extracting to helper functions.'
+      maxNestingDepth: `Nesting too deep: depth {{depth}} exceeds maximum {{maxDepth}}.
+
+Nesting path:
+{{nestingPath}}
+
+Refactoring suggestions:
+1. Use guard clauses (early returns) to reduce nesting
+2. Extract the deeply nested code into a separate function
+3. Consider if some conditions can be combined or inverted`
     }
   }),
 
@@ -42,6 +50,41 @@ const rule: Rule.RuleModule = {
     // Stack to track nesting depth and context
     const depthStack: number[] = [];
     let currentDepth = 0;
+
+    // Track nesting path for better error messages
+    interface NestingInfo {
+      type: string;
+      line: number;
+    }
+    const nestingPathStack: NestingInfo[] = [];
+
+    /**
+     * Get readable name for a node type
+     */
+    function getNodeTypeName(node: any): string {
+      const typeMap: Record<string, string> = {
+        'IfStatement': 'if',
+        'ForStatement': 'for',
+        'ForInStatement': 'for-in',
+        'ForOfStatement': 'for-of',
+        'WhileStatement': 'while',
+        'DoWhileStatement': 'do-while',
+        'SwitchStatement': 'switch',
+        'TryStatement': 'try',
+        'WithStatement': 'with'
+      };
+      return typeMap[node.type] || node.type;
+    }
+
+    /**
+     * Format the nesting path for display
+     */
+    function formatNestingPath(): string {
+      return nestingPathStack.map((info, i) => {
+        const indent = '  '.repeat(i);
+        return `${indent}${i + 1}. ${info.type} (line ${info.line})`;
+      }).join('\n');
+    }
 
     /**
      * Check if a node is an immediately invoked function expression (IIFE)
@@ -65,13 +108,20 @@ const rule: Rule.RuleModule = {
     function enterNestingStructure(node: any): void {
       currentDepth++;
 
+      // Track this level in the nesting path
+      nestingPathStack.push({
+        type: getNodeTypeName(node),
+        line: node.loc?.start.line || 0
+      });
+
       if (currentDepth > maxDepth) {
         context.report({
           node,
           messageId: 'maxNestingDepth',
           data: {
             depth: currentDepth.toString(),
-            maxDepth: maxDepth.toString()
+            maxDepth: maxDepth.toString(),
+            nestingPath: formatNestingPath()
           }
         });
       }
@@ -82,7 +132,11 @@ const rule: Rule.RuleModule = {
      */
     function exitNestingStructure(): void {
       currentDepth--;
+      nestingPathStack.pop();
     }
+
+    // Also save nesting path when entering functions
+    const nestingPathSaveStack: NestingInfo[][] = [];
 
     /**
      * Handle entering a function - saves current depth and starts fresh
@@ -96,9 +150,11 @@ const rule: Rule.RuleModule = {
         return;
       }
 
-      // Save current depth and reset for the new function scope
+      // Save current depth and nesting path, reset for new function scope
       depthStack.push(currentDepth);
+      nestingPathSaveStack.push([...nestingPathStack]);
       currentDepth = 0;
+      nestingPathStack.length = 0;
     }
 
     /**
@@ -112,9 +168,14 @@ const rule: Rule.RuleModule = {
         return;
       }
 
-      // Restore previous depth
+      // Restore previous depth and nesting path
       if (depthStack.length > 0) {
         currentDepth = depthStack.pop()!;
+        const savedPath = nestingPathSaveStack.pop();
+        if (savedPath) {
+          nestingPathStack.length = 0;
+          nestingPathStack.push(...savedPath);
+        }
       }
     }
 

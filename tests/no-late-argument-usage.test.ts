@@ -54,7 +54,7 @@ ruleTester.run('no-late-argument-usage', rule, {
       errors: [
         {
           messageId: 'lateArgumentUsage',
-          data: { name: 'param2', lines: '13' }
+          data: { name: 'param2', lines: '13', max: '10', functionStart: '2', usageLine: '15' }
         }
       ]
     }

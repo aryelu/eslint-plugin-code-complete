@@ -170,7 +170,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. while (line 4)\n      4. if (line 5)' } }]
     },
 
     // Depth 5 - multiple violations
@@ -189,8 +189,8 @@ ruleTester.run('max-nesting-depth', rule, {
         }
       }`,
       errors: [
-        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } },
-        { messageId: 'maxNestingDepth', data: { depth: '5', maxDepth: '3' } }
+        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. while (line 4)\n      4. try (line 5)' } },
+        { messageId: 'maxNestingDepth', data: { depth: '5', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. while (line 4)\n      4. try (line 5)\n        5. if (line 6)' } }
       ]
     },
 
@@ -209,7 +209,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. switch (line 4)\n      4. if (line 6)' } }]
     },
 
     // Try-catch exceeding depth
@@ -225,7 +225,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. while (line 4)\n      4. try (line 5)' } }]
     },
 
     // Catch clause also counts
@@ -243,7 +243,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. try (line 4)\n      4. if (line 7)' } }]
     },
 
     // Custom max depth of 2
@@ -258,7 +258,7 @@ ruleTester.run('max-nesting-depth', rule, {
         }
       }`,
       options: [{ maxDepth: 2 }],
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '3', maxDepth: '2' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '3', maxDepth: '2', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. if (line 4)' } }]
     },
 
     // IIFE not ignored when configured
@@ -276,8 +276,8 @@ ruleTester.run('max-nesting-depth', rule, {
       })();`,
       options: [{ ignoreTopLevelIIFE: false }],
       errors: [
-        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } },
-        { messageId: 'maxNestingDepth', data: { depth: '5', maxDepth: '3' } }
+        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. FunctionExpression (line 1)\n  2. if (line 2)\n    3. for (line 3)\n      4. while (line 4)' } },
+        { messageId: 'maxNestingDepth', data: { depth: '5', maxDepth: '3', nestingPath: '1. FunctionExpression (line 1)\n  2. if (line 2)\n    3. for (line 3)\n      4. while (line 4)\n        5. if (line 5)' } }
       ]
     },
 
@@ -294,7 +294,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for-of (line 3)\n    3. while (line 4)\n      4. if (line 5)' } }]
     },
 
     // For-in loop exceeding depth
@@ -310,7 +310,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for-in (line 3)\n    3. while (line 4)\n      4. if (line 5)' } }]
     },
 
     // Do-while exceeding depth
@@ -326,7 +326,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. do-while (line 4)\n      4. if (line 5)' } }]
     },
 
     // With statement (deprecated but still in spec)
@@ -342,7 +342,7 @@ ruleTester.run('max-nesting-depth', rule, {
           }
         }
       }`,
-      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }]
+      errors: [{ messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 2)\n  2. for (line 3)\n    3. with (line 4)\n      4. if (line 5)' } }]
     },
 
     // Multiple functions, each with violations
@@ -373,8 +373,8 @@ ruleTester.run('max-nesting-depth', rule, {
         }
       `,
       errors: [
-        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } },
-        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3' } }
+        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 3)\n  2. for (line 4)\n    3. while (line 5)\n      4. if (line 6)' } },
+        { messageId: 'maxNestingDepth', data: { depth: '4', maxDepth: '3', nestingPath: '1. if (line 15)\n  2. for (line 16)\n    3. while (line 17)\n      4. if (line 18)' } }
       ]
     }
   ]
