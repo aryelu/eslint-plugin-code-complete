@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-code-complete",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "ESLint rules to help write complete, maintainable code with better readability",
   "type": "module",
   "main": "dist/index.js",
