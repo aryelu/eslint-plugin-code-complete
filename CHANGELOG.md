@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/aryelu/eslint-plugin-code-complete/compare/v1.4.0...v1.5.0) (2025-12-27)
+
+
+### Features
+
+* add coupling detection rules for high cohesion low coupling ([98f74e6](https://github.com/aryelu/eslint-plugin-code-complete/commit/98f74e6))
+* enhance rule error messages with actionable context ([a88fca3](https://github.com/aryelu/eslint-plugin-code-complete/commit/a88fca3))
+
 ## [1.4.0](https://github.com/aryelu/eslint-plugin-code-complete/compare/v1.3.1...v1.4.0) (2025-12-24)
 
 

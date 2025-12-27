@@ -54,27 +54,6 @@ Refactoring suggestions:
       return 0;
     };
 
-    // Extract condition parts for detailed breakdown
-    const getConditionParts = (node: any, parts: string[] = [], depth = 0): string[] => {
-      if (!node) return parts;
-
-      if (node.type === 'LogicalExpression') {
-        const operator = node.operator; // && or ||
-        getConditionParts(node.left, parts, depth + 1);
-        getConditionParts(node.right, parts, depth + 1);
-
-        if (depth === 0) {
-          // At root level, describe the structure
-          const sourceCode = context.getSourceCode();
-          const leftText = sourceCode.getText(node.left).slice(0, 30);
-          const rightText = sourceCode.getText(node.right).slice(0, 30);
-          parts.unshift(`Structure: (${leftText}...) ${operator} (${rightText}...)`);
-        }
-      }
-
-      return parts;
-    };
-
     // Suggest a name based on context
     const suggestName = (node: any): string => {
       const sourceCode = context.getSourceCode();
@@ -94,11 +73,9 @@ Refactoring suggestions:
     // Format condition breakdown for message
     const formatConditionBreakdown = (node: any): string => {
       const sourceCode = context.getSourceCode();
-      const fullText = sourceCode.getText(node);
 
       // Split by operators to show each part
       const parts: string[] = [];
-      let current = node;
 
       const collectParts = (n: any) => {
         if (n.type === 'LogicalExpression') {
