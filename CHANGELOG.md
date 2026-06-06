@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/aryelu/eslint-plugin-code-complete/compare/v1.5.0...v1.6.0) (2026-06-06)
+
+
+### Features
+
+* add max-function-length and prefer-early-return rules ([fdb1e05](https://github.com/aryelu/eslint-plugin-code-complete/commit/fdb1e0548606d7f5cd4ee706bc5c404cc3463d51))
+* add max-function-length and prefer-early-return rules ([75566f2](https://github.com/aryelu/eslint-plugin-code-complete/commit/75566f20963d57f7cfd934a1fa490f38ebdbf5e2))
+* add no-feature-envy rule ([a702e8e](https://github.com/aryelu/eslint-plugin-code-complete/commit/a702e8eca8f8b58151b5afbc3670321c1879cec7))
+* add no-feature-envy rule ([e91ad36](https://github.com/aryelu/eslint-plugin-code-complete/commit/e91ad36a638a84b2018ff551af5058c81df9ce0c))
+
 ## [1.5.0](https://github.com/aryelu/eslint-plugin-code-complete/compare/v1.4.0...v1.5.0) (2026-06-06)
 
 
