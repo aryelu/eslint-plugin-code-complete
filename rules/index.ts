@@ -12,3 +12,4 @@ export { default as highImportCoupling } from './high-import-coupling';
 export { default as highFanOut } from './high-fan-out';
 export { default as maxFunctionLength } from './max-function-length';
 export { default as preferEarlyReturn } from './prefer-early-return';
+export { default as noFeatureEnvy } from './no-feature-envy';

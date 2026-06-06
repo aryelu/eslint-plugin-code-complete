@@ -20,7 +20,8 @@ export default {
     'high-import-coupling': rules.highImportCoupling,
     'high-fan-out': rules.highFanOut,
     'max-function-length': rules.maxFunctionLength,
-    'prefer-early-return': rules.preferEarlyReturn
+    'prefer-early-return': rules.preferEarlyReturn,
+    'no-feature-envy': rules.noFeatureEnvy
   }
 };
 

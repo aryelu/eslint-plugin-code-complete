@@ -75,4 +75,8 @@ export interface MaxFunctionLengthOptions extends BaseRuleOptions {
 
 export interface PreferEarlyReturnOptions extends BaseRuleOptions {
   maxLines?: number;
+}
+
+export interface NoFeatureEnvyOptions extends BaseRuleOptions {
+  minExternalAccesses?: number;
 } 
