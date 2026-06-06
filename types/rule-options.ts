@@ -65,4 +65,14 @@ export interface HighFanOutOptions extends BaseRuleOptions {
   ignoreBuiltIns?: boolean;
   ignoreThisReferences?: boolean;
   minFunctionLength?: number;
+}
+
+export interface MaxFunctionLengthOptions extends BaseRuleOptions {
+  maxLines?: number;
+  skipBlankLines?: boolean;
+  skipComments?: boolean;
+}
+
+export interface PreferEarlyReturnOptions extends BaseRuleOptions {
+  maxLines?: number;
 } 

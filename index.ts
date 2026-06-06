@@ -18,7 +18,9 @@ export default {
     'max-nesting-depth': rules.maxNestingDepth,
     'high-parameter-coupling': rules.highParameterCoupling,
     'high-import-coupling': rules.highImportCoupling,
-    'high-fan-out': rules.highFanOut
+    'high-fan-out': rules.highFanOut,
+    'max-function-length': rules.maxFunctionLength,
+    'prefer-early-return': rules.preferEarlyReturn
   }
 };
 
