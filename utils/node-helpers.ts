@@ -3,6 +3,8 @@
  * @author eslint-plugin-code-complete
  */
 
+import type { Rule, SourceCode } from 'eslint';
+
 /**
  * Checks if a parameter name starts with an allowed prefix
  * @param {string} name - Parameter name
@@ -227,3 +229,16 @@ export function countFunctionParameters(
 
   return count;
 } 
+/**
+ * Gets the SourceCode object for the current lint run.
+ *
+ * ESLint 10 removed the deprecated `context.getSourceCode()` method in favour of
+ * the `context.sourceCode` property, so prefer the property and only fall back to
+ * the method for older versions that predate it.
+ *
+ * @param {Rule.RuleContext} context - The rule context
+ * @returns {SourceCode} - The source code object
+ */
+export function getSourceCode(context: Rule.RuleContext): SourceCode {
+  return context.sourceCode ?? context.getSourceCode();
+}

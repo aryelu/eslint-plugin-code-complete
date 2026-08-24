@@ -6,6 +6,7 @@
 import { Rule } from 'eslint';
 import { ComplexConditionalsOptions } from '../types/rule-options.js';
 import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
+import { getSourceCode } from '../utils/node-helpers.js';
 
 const rule: Rule.RuleModule = {
   meta: createRuleMeta('no-complex-conditionals', {
@@ -56,7 +57,7 @@ Refactoring suggestions:
 
     // Suggest a name based on context
     const suggestName = (node: any): string => {
-      const sourceCode = context.getSourceCode();
+      const sourceCode = getSourceCode(context);
       const text = sourceCode.getText(node).toLowerCase();
 
       if (text.includes('valid') || text.includes('invalid')) return 'isValid';
@@ -72,7 +73,7 @@ Refactoring suggestions:
 
     // Format condition breakdown for message
     const formatConditionBreakdown = (node: any): string => {
-      const sourceCode = context.getSourceCode();
+      const sourceCode = getSourceCode(context);
 
       // Split by operators to show each part
       const parts: string[] = [];

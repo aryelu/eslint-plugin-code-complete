@@ -1,6 +1,7 @@
 import { Rule } from 'eslint';
 import { MaxFunctionLengthOptions } from '../types/rule-options.js';
 import { createRuleMeta, RULE_CATEGORIES } from '../utils/rule-meta.js';
+import { getSourceCode } from '../utils/node-helpers.js';
 
 const rule: Rule.RuleModule = {
   meta: createRuleMeta('max-function-length', {
@@ -44,7 +45,7 @@ Long functions are hard to understand and test. Consider:
     const skipBlankLines = options.skipBlankLines !== undefined ? options.skipBlankLines : true;
     const skipComments = options.skipComments !== undefined ? options.skipComments : true;
 
-    const sourceCode = context.getSourceCode();
+    const sourceCode = getSourceCode(context);
 
     function countLines(node: any): number {
       const body = node.body;
